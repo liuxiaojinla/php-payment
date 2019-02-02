@@ -15,6 +15,8 @@ use xin\core\util\Str;
 /**
  * 支付API工厂
  * @method string getAppId() 获取AppId
+ * @method \xin\payment\driver\Wechat factoryWechat(array $options) static 获取微信支付实例
+ * @method \xin\payment\driver\Wechat factoryAlipay(array $options) static 获取支付宝支付实例
  *
  * @package xin\payment
  */
