@@ -7,9 +7,7 @@
  * @author BD<657306123@qq.com>
  */
 
-namespace xin\payment\data;
-
-use xin\payment\PaymentData;
+namespace xin\payment;
 
 /**
  * 请求参数
@@ -25,7 +23,7 @@ class PaymentOptions extends PaymentData{
 	 */
 	public function setSign($sign){
 		if(is_callable($sign)){
-			$sign = call_user_func($sign, $this->options);
+			$sign = call_user_func($sign, $this->data);
 		}
 		$this->set('sign', $sign);
 	}

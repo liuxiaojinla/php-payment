@@ -9,24 +9,23 @@
 
 namespace xin\payment\driver;
 
-use xin\core\util\Str;
-use xin\core\util\Time;
-use xin\payment\data\CloseOrderPaymentOptions;
-use xin\payment\data\CloseOrderPaymentResult;
-use xin\payment\data\OrderQueryPaymentOptions;
-use xin\payment\data\OrderQueryPaymentResult;
-use xin\payment\data\PaymentOptions;
-use xin\payment\data\PaymentResult;
-use xin\payment\data\RefundPaymentOptions;
-use xin\payment\data\RefundPaymentResult;
-use xin\payment\data\RefundQueryPaymentOptions;
-use xin\payment\data\RefundQueryPaymentResult;
-use xin\payment\data\ReversePaymentOptions;
-use xin\payment\data\ReversePaymentResult;
-use xin\payment\data\UnifiedOrderPaymentOptions;
-use xin\payment\data\UnifiedOrderPaymentResult;
+use xin\payment\CloseOrderOptions;
+use xin\payment\CloseOrderResult;
+use xin\payment\OrderQueryOptions;
+use xin\payment\OrderQueryResult;
 use xin\payment\Payment;
 use xin\payment\PaymentException;
+use xin\payment\PaymentOptions;
+use xin\payment\PaymentResult;
+use xin\payment\RefundOptions;
+use xin\payment\RefundQueryOptions;
+use xin\payment\RefundQueryResult;
+use xin\payment\RefundResult;
+use xin\payment\ReverseOptions;
+use xin\payment\ReverseResult;
+use xin\payment\UnifiedOrderOptions;
+use xin\payment\UnifiedOrderResult;
+use xin\payment\Util;
 
 /**
  * 微信支付
@@ -43,29 +42,27 @@ use xin\payment\PaymentException;
 class Wechat extends Payment{
 
 	/**
-	 * 常量列表
-	 *
-	 * @var array
-	 */
-	protected $constant = [
-		'app_id', 'sign_key', 'mch_id',
-	];
-
-	/**
 	 * WeChat constructor.
 	 *
-	 * @param array $options
+	 * @param array $config
 	 * @throws PaymentException
 	 */
-	public function __construct(array $options){
+	public function __construct(array $config){
 		// app_id 必填
-		if(!isset($options['app_id']) || empty($options['app_id'])) throw new PaymentException('缺少必填参数 app_id');
-		// mch_id 必填
-		if(!isset($options['mch_id']) || empty($options['mch_id'])) throw new PaymentException('缺少必填参数 mch_id');
-		// sign_key 必填
-		if(!isset($options['sign_key']) || empty($options['sign_key'])) throw new PaymentException('缺少必填参数 sign_key');
+		if(!isset($config['app_id']) || empty($config['app_id'])){
+			throw new PaymentException('缺少必填参数 app_id');
+		}
 
-		$this->options = $options;
+		// mch_id 必填
+		if(!isset($config['mch_id']) || empty($config['mch_id'])){
+			throw new PaymentException('缺少必填参数 mch_id');
+		}
+		// sign_key 必填
+		if(!isset($config['sign_key']) || empty($config['sign_key'])){
+			throw new PaymentException('缺少必填参数 sign_key');
+		}
+
+		parent::__construct($config);
 	}
 
 	/**
@@ -73,11 +70,11 @@ class Wechat extends Payment{
 	 * UnifiedOrderPaymentOptions 中必填：
 	 * out_trade_no body 、 total_fee、 trade_type、
 	 *
-	 * @param UnifiedOrderPaymentOptions $input
-	 * @return UnifiedOrderPaymentResult
+	 * @param UnifiedOrderOptions $input
+	 * @return UnifiedOrderResult
 	 * @throws PaymentException
 	 */
-	public function unifiedOrder(UnifiedOrderPaymentOptions $input){
+	public function unifiedOrder(UnifiedOrderOptions $input){
 		$input->check([
 			'out_trade_no', 'body',
 			'total_fee', 'trade_type',
@@ -100,126 +97,187 @@ class Wechat extends Payment{
 		$input->set('spbill_create_ip', isset($_SERVER['REMOTE_ADDR']) ? $_SERVER['REMOTE_ADDR'] : '');
 
 		$url = "https://api.mch.weixin.qq.com/pay/unifiedorder";
-		/**@var $result UnifiedOrderPaymentResult */
-		$result = $this->result($url, $input, UnifiedOrderPaymentResult::class, false, 6);
+		/**@var $result UnifiedOrderResult */
+		$result = $this->result($url, $input, UnifiedOrderResult::class, false, 6);
+
 		return $result->transformKeys([
 
 		]);
 	}
 
 	/**
-	 * 查询订单
-	 * OrderQueryPaymentOptions 中 out_trade_no、transaction_id至少填一个
+	 * 获取结果
 	 *
-	 * @param OrderQueryPaymentOptions $input
-	 * @return OrderQueryPaymentResult
+	 * @param string         $url
+	 * @param PaymentOptions $input
+	 * @param string         $paymentResultClass
+	 * @param bool           $useCert
+	 * @param int            $second
+	 * @return mixed
 	 * @throws PaymentException
 	 */
-	public function orderQuery(OrderQueryPaymentOptions $input){
-		if(!$input->hasOutTradeNo() && !$input->hasTransactionId()){
-			throw new PaymentException("订单查询接口中，out_trade_no、transaction_id至少填一个！");
-		}
+	protected function result($url, PaymentOptions $input, $paymentResultClass, $useCert = false, $second = 30){
+		//请求开始时间
+		$startTimeStamp = Util::getMillisecond();
 
-		$url = "https://api.mch.weixin.qq.com/pay/orderquery";
-		$result = $this->result($url, $input, OrderQueryPaymentResult::class, false, 6);
-		return $result->transformKeys([
+		// 请求数据
+		$xml = $this->initOptions($input)->toXml();
+		$response = self::request($url, $xml, $useCert, $second);
 
-		]);
+		/**@var $paymentResultClass PaymentResult::class */
+		$result = $paymentResultClass::fromXML($response);
+		$result = $this->initResult($result);
+
+		self::reportCostTime($url, $startTimeStamp, $result);//上报请求花费时间
+
+		return $result;
 	}
 
 	/**
-	 * 关闭订单，WxPayCloseOrder中out_trade_no必填
-	 * appid、mchid、spbill_create_ip、nonce_str不需要填入
+	 * 初始化Input实例
 	 *
-	 * @param CloseOrderPaymentOptions $input
-	 * @return CloseOrderPaymentResult
-	 * @throws PaymentException
+	 * @param PaymentOptions $input
+	 * @return PaymentOptions
 	 */
-	public function closeOrder(CloseOrderPaymentOptions $input){
-		if(!$input->hasOutTradeNo()){
-			throw new PaymentException("订单查询接口中，out_trade_no必填！");
-		}
-
-		$url = "https://api.mch.weixin.qq.com/pay/closeorder";
-		$result = $this->result($url, $input, CloseOrderPaymentResult::class, false, 6);
-		return $result->transformKeys([
-
-		]);
+	protected function initOptions(PaymentOptions $input){
+		$input->set('appid', $this->config['appid']);//公众账号ID
+		$input->set('mch_id', $this->config['mch_id']);//商户号
+		$input->set('nonce_str', Util::nonceStr());//随机字符串
+		$this->setSign($input);
+		return $input;
 	}
 
 	/**
-	 * 申请退款，WxPayRefund中out_trade_no、transaction_id至少填一个且
-	 * out_refund_no、total_fee、refund_fee、op_user_id为必填参数
-	 * appid、mchid、spbill_create_ip、nonce_str不需要填入
+	 * 设置支付签名
 	 *
-	 * @param RefundPaymentOptions $input
-	 * @return RefundPaymentResult
-	 * @throws PaymentException
+	 * @param PaymentOptions $options
 	 */
-	public function refund(RefundPaymentOptions $input){
-		if(!$input->hasOutTradeNo() && !$input->hasTransactionId()){
-			throw new PaymentException("退款申请接口中，out_trade_no、transaction_id至少填一个！");
-		}elseif(!$input->hasOutRefundNo()){
-			throw new PaymentException("退款申请接口中，缺少必填参数out_refund_no！");
-		}elseif(!$input->hasTotalFee()){
-			throw new PaymentException("退款申请接口中，缺少必填参数total_fee！");
-		}elseif(!$input->hasRefundFee()){
-			throw new PaymentException("退款申请接口中，缺少必填参数refund_fee！");
-		}elseif(!$input->hasOpUserId()){
-			throw new PaymentException("退款申请接口中，缺少必填参数op_user_id！");
-		}
-
-		$url = "https://api.mch.weixin.qq.com/secapi/pay/refund";
-		$result = $this->result($url, $input, RefundPaymentResult::class, false, 6);
-		return $result->transformKeys([
-
-		]);
+	public function setSign(PaymentOptions $options){
+		$sign = self::makeSign($this->getSignKey(), $options->toArray());
+		$options->setSign($sign);
 	}
 
 	/**
-	 * 查询退款
-	 * 提交退款申请后，通过调用该接口查询退款状态。退款有一定延时，
-	 * 用零钱支付的退款20分钟内到账，银行卡支付的退款3个工作日后重新查询退款状态。
-	 * WxPayRefundQuery中out_refund_no、out_trade_no、transaction_id、refund_id四个参数必填一个
-	 * appid、mchid、spbill_create_ip、nonce_str不需要填入
+	 * 数据签名
 	 *
-	 * @param RefundQueryPaymentOptions $input
-	 * @return RefundQueryPaymentResult
-	 * @throws PaymentException
+	 * @param string $key
+	 * @param array  $data
+	 * @return string
 	 */
-	public function refundQuery(RefundQueryPaymentOptions $input){
-		if(!$input->hasOutRefundNo()
-		   && !$input->hasOutTradeNo()
-		   && !$input->hasTransactionId()
-		   && !$input->hasRefundId()){
-			throw new PaymentException("退款查询接口中，out_refund_no、out_trade_no、transaction_id、refund_id四个参数必填一个！");
-		}
-
-		$url = "https://api.mch.weixin.qq.com/pay/refundquery";
-		$result = $this->result($url, $input, RefundQueryPaymentResult::class, false, 6);
-		return $result->transformKeys([
-
-		]);
+	public static function makeSign($key, $data){
+		//签名步骤一：按字典序排序参数
+		ksort($data);
+		$sign = Util::buildParamsToUrl($data);
+		//签名步骤二：在string后加入KEY
+		$sign = $sign."&key=".$key;
+		//签名步骤三：MD5加密
+		$sign = md5($sign);
+		//签名步骤四：所有字符转为大写
+		$sign = strtoupper($sign);
+		return $sign;
 	}
 
 	/**
-	 * 撤销订单API接口，WxPayReverse中参数out_trade_no和transaction_id必须填写一个
-	 * appid、mchid、spbill_create_ip、nonce_str不需要填入
+	 * 以post方式提交xml到对应的接口url
 	 *
-	 * @param ReversePaymentOptions $input
-	 * @return ReversePaymentResult
+	 * @param string $url url
+	 * @param string $xml 需要post的xml数据
+	 * @param bool   $useCert 是否需要证书，默认不需要
+	 * @param int    $second url执行超时时间，默认30s
+	 * @return mixed
 	 * @throws PaymentException
 	 */
-	public function reverse(ReversePaymentOptions $input){
-		if(!$input->hasOutTradeNo() && !$input->hasTransactionId()){
-			throw new PaymentException("撤销订单API接口中，参数out_trade_no和transaction_id必须填写一个！");
+	protected function request($url, $xml, $useCert = false, $second = 30){
+		$ch = curl_init();
+
+		//设置超时
+		curl_setopt($ch, CURLOPT_TIMEOUT, $second);
+
+		//如果有配置代理这里就设置代理
+		$proxyHost = $this->hasConfig('proxy_host');
+		$proxyPort = $this->hasConfig('proxy_port');
+		if($proxyHost
+		   && $proxyHost != "0.0.0.0"
+		   && $proxyPort
+		   && $proxyPort != 0){
+			curl_setopt($ch, CURLOPT_PROXY, $proxyHost);
+			curl_setopt($ch, CURLOPT_PROXYPORT, $proxyPort);
+		}
+		curl_setopt($ch, CURLOPT_URL, $url);
+
+		//设置header
+		curl_setopt($ch, CURLOPT_HEADER, false);
+		//要求结果为字符串且输出到屏幕上
+		curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+
+		//设置证书
+		if($useCert == true){
+			//严格校验
+			curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, true);
+			curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 2);
+
+			//使用证书：cert 与 key 分别属于两个.pem文件
+			curl_setopt($ch, CURLOPT_SSLCERTTYPE, 'PEM');
+			curl_setopt($ch, CURLOPT_SSLCERT, $this->getSslCert());
+			curl_setopt($ch, CURLOPT_SSLKEYTYPE, 'PEM');
+			curl_setopt($ch, CURLOPT_SSLKEY, $this->getSslKey());
+		}else{
+			curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+			curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, false);
 		}
 
-		$url = "https://api.mch.weixin.qq.com/secapi/pay/reverse";
-		$result = $this->result($url, $input, ReversePaymentResult::class, false, 6);
-		return $result->transformKeys([
+		//post提交方式
+		curl_setopt($ch, CURLOPT_POST, true);
+		curl_setopt($ch, CURLOPT_POSTFIELDS, $xml);
 
-		]);
+		//运行curl
+		$data = curl_exec($ch);
+		//返回结果
+		if($data){
+			curl_close($ch);
+			return $data;
+		}else{
+			$errCode = curl_errno($ch);
+			$errMsg = curl_error($ch);
+			curl_close($ch);
+			throw new PaymentException("curl error:{$errMsg}", $errCode);
+		}
+	}
+
+	/**
+	 * 初始化Output
+	 *
+	 * @param PaymentResult $result
+	 * @return mixed
+	 * @throws PaymentException
+	 */
+	protected function initResult(PaymentResult $result){
+		if($result->get('return_code') != 'SUCCESS'){
+			throw new PaymentException($result->get('return_msg'));
+		}
+
+		if($result->get('result_code') != 'SUCCESS'){
+			throw new WechatPaymentException($result->get('err_code_des'), $result->get('err_code'));
+		}
+
+		$this->checkSign($result);
+
+		return $result;
+	}
+
+	/**
+	 * 检测签名
+	 *
+	 * @param PaymentResult $result
+	 * @throws PaymentException
+	 */
+	public function checkSign(PaymentResult $result){
+		if(!$result->hasSign()) throw new PaymentException("签名错误[sign not exist]！");
+
+		$sign = self::makeSign($this->getSignKey(), $result->toArray());
+		if($result->getSign() != $sign){
+			throw new PaymentException("签名错误！");
+		}
 	}
 
 	/**
@@ -230,7 +288,7 @@ class Wechat extends Payment{
 	 * @param array|PaymentResult $data
 	 */
 	protected function reportCostTime($url, $startTimeStamp, $data){
-		$reportLevel = $this->get('report_level', 0);
+		$reportLevel = $this->getConfig('report_level', 0);
 
 		//如果不需要上报数据
 		if($reportLevel == 0){
@@ -247,7 +305,7 @@ class Wechat extends Payment{
 		}
 
 		//上报逻辑
-		$endTimeStamp = Time::getMillisecond();
+		$endTimeStamp = Util::getMillisecond();
 
 		$input = new PaymentOptions();
 		$input->set('interface_url', $url);
@@ -322,6 +380,121 @@ class Wechat extends Payment{
 	}
 
 	/**
+	 * 查询订单
+	 * OrderQueryPaymentOptions 中 out_trade_no、transaction_id至少填一个
+	 *
+	 * @param OrderQueryOptions $input
+	 * @return OrderQueryResult
+	 * @throws PaymentException
+	 */
+	public function orderQuery(OrderQueryOptions $input){
+		if(!$input->hasOutTradeNo() && !$input->hasTransactionId()){
+			throw new PaymentException("订单查询接口中，out_trade_no、transaction_id至少填一个！");
+		}
+
+		$url = "https://api.mch.weixin.qq.com/pay/orderquery";
+		$result = $this->result($url, $input, OrderQueryResult::class, false, 6);
+		return $result->transformKeys([
+
+		]);
+	}
+
+	/**
+	 * 关闭订单，WxPayCloseOrder中out_trade_no必填
+	 * appid、mchid、spbill_create_ip、nonce_str不需要填入
+	 *
+	 * @param CloseOrderOptions $input
+	 * @return CloseOrderResult
+	 * @throws PaymentException
+	 */
+	public function closeOrder(CloseOrderOptions $input){
+		if(!$input->hasOutTradeNo()){
+			throw new PaymentException("订单查询接口中，out_trade_no必填！");
+		}
+
+		$url = "https://api.mch.weixin.qq.com/pay/closeorder";
+		$result = $this->result($url, $input, CloseOrderResult::class, false, 6);
+		return $result->transformKeys([
+
+		]);
+	}
+
+	/**
+	 * 申请退款，WxPayRefund中out_trade_no、transaction_id至少填一个且
+	 * out_refund_no、total_fee、refund_fee、op_user_id为必填参数
+	 * appid、mchid、spbill_create_ip、nonce_str不需要填入
+	 *
+	 * @param RefundOptions $input
+	 * @return RefundResult
+	 * @throws PaymentException
+	 */
+	public function refund(RefundOptions $input){
+		if(!$input->hasOutTradeNo() && !$input->hasTransactionId()){
+			throw new PaymentException("退款申请接口中，out_trade_no、transaction_id至少填一个！");
+		}elseif(!$input->hasOutRefundNo()){
+			throw new PaymentException("退款申请接口中，缺少必填参数out_refund_no！");
+		}elseif(!$input->hasTotalFee()){
+			throw new PaymentException("退款申请接口中，缺少必填参数total_fee！");
+		}elseif(!$input->hasRefundFee()){
+			throw new PaymentException("退款申请接口中，缺少必填参数refund_fee！");
+		}elseif(!$input->hasOpUserId()){
+			throw new PaymentException("退款申请接口中，缺少必填参数op_user_id！");
+		}
+
+		$url = "https://api.mch.weixin.qq.com/secapi/pay/refund";
+		$result = $this->result($url, $input, RefundResult::class, false, 6);
+		return $result->transformKeys([
+
+		]);
+	}
+
+	/**
+	 * 查询退款
+	 * 提交退款申请后，通过调用该接口查询退款状态。退款有一定延时，
+	 * 用零钱支付的退款20分钟内到账，银行卡支付的退款3个工作日后重新查询退款状态。
+	 * WxPayRefundQuery中out_refund_no、out_trade_no、transaction_id、refund_id四个参数必填一个
+	 * appid、mchid、spbill_create_ip、nonce_str不需要填入
+	 *
+	 * @param RefundQueryOptions $input
+	 * @return RefundQueryResult
+	 * @throws PaymentException
+	 */
+	public function refundQuery(RefundQueryOptions $input){
+		if(!$input->hasOutRefundNo()
+		   && !$input->hasOutTradeNo()
+		   && !$input->hasTransactionId()
+		   && !$input->hasRefundId()){
+			throw new PaymentException("退款查询接口中，out_refund_no、out_trade_no、transaction_id、refund_id四个参数必填一个！");
+		}
+
+		$url = "https://api.mch.weixin.qq.com/pay/refundquery";
+		$result = $this->result($url, $input, RefundQueryResult::class, false, 6);
+		return $result->transformKeys([
+
+		]);
+	}
+
+	/**
+	 * 撤销订单API接口，WxPayReverse中参数out_trade_no和transaction_id必须填写一个
+	 * appid、mchid、spbill_create_ip、nonce_str不需要填入
+	 *
+	 * @param ReverseOptions $input
+	 * @return ReverseResult
+	 * @throws PaymentException
+	 */
+	public function reverse(ReverseOptions $input){
+		if(!$input->hasOutTradeNo() && !$input->hasTransactionId()){
+			throw new PaymentException("撤销订单API接口中，参数out_trade_no和transaction_id必须填写一个！");
+		}
+
+		$url = "https://api.mch.weixin.qq.com/secapi/pay/reverse";
+		$result = $this->result($url, $input, ReverseResult::class, false, 6);
+		return $result->transformKeys([
+
+		]);
+	}
+
+	/**
 	 * 支付结果通用通知
 	 *
 	 * @param string $msg
@@ -337,179 +510,6 @@ class Wechat extends Payment{
 		}catch(PaymentException $e){
 			$msg = $e->getMessage();
 			return false;
-		}
-	}
-
-	/**
-	 * 获取结果
-	 *
-	 * @param string         $url
-	 * @param PaymentOptions $input
-	 * @param string         $paymentResultClass
-	 * @param bool           $useCert
-	 * @param int            $second
-	 * @return mixed
-	 * @throws PaymentException
-	 */
-	protected function result($url, PaymentOptions $input, $paymentResultClass, $useCert = false, $second = 30){
-		//请求开始时间
-		$startTimeStamp = Time::getMillisecond();
-
-		// 请求数据
-		$xml = $this->initOptions($input)->toXml();
-		$response = self::request($url, $xml, $useCert, $second);
-
-		/**@var $paymentResultClass PaymentResult::class */
-		$result = $paymentResultClass::fromXML($response);
-		$result = $this->initResult($result);
-
-		self::reportCostTime($url, $startTimeStamp, $result);//上报请求花费时间
-
-		return $result;
-	}
-
-	/**
-	 * 初始化Input实例
-	 *
-	 * @param PaymentOptions $input
-	 * @return PaymentOptions
-	 */
-	protected function initOptions(PaymentOptions $input){
-		$input->set('appid', $this->getAppId());//公众账号ID
-		$input->set('mch_id', $this->getMchId());//商户号
-		$input->set('nonce_str', Str::random());//随机字符串
-		$this->setSign($input);
-		return $input;
-	}
-
-	/**
-	 * 初始化Output
-	 *
-	 * @param PaymentResult $result
-	 * @return mixed
-	 * @throws PaymentException
-	 */
-	protected function initResult(PaymentResult $result){
-		if($result->get('return_code') != 'SUCCESS'){
-			throw new PaymentException($result->get('return_msg'));
-		}
-
-		if($result->get('result_code') != 'SUCCESS'){
-			throw new WechatPaymentException($result->get('err_code_des'), $result->get('err_code'));
-		}
-
-		$this->checkSign($result);
-
-		return $result;
-	}
-
-	/**
-	 * 数据签名
-	 *
-	 * @param string $key
-	 * @param array  $data
-	 * @return string
-	 */
-	public static function makeSign($key, $data){
-		//签名步骤一：按字典序排序参数
-		ksort($data);
-		$sign = self::buildParamsToUrl($data);
-		//签名步骤二：在string后加入KEY
-		$sign = $sign."&key=".$key;
-		//签名步骤三：MD5加密
-		$sign = md5($sign);
-		//签名步骤四：所有字符转为大写
-		$sign = strtoupper($sign);
-		return $sign;
-	}
-
-	/**
-	 * 设置支付签名
-	 *
-	 * @param PaymentOptions $options
-	 */
-	public function setSign(PaymentOptions $options){
-		$sign = self::makeSign($this->getSignKey(), $options->toArray());
-		$options->setSign($sign);
-	}
-
-	/**
-	 * 检测签名
-	 *
-	 * @param PaymentResult $result
-	 * @throws PaymentException
-	 */
-	public function checkSign(PaymentResult $result){
-		if(!$result->hasSign()) throw new PaymentException("签名错误[sign not exist]！");
-
-		$sign = self::makeSign($this->getSignKey(), $result->toArray());
-		if($result->getSign() != $sign){
-			throw new PaymentException("签名错误！");
-		}
-	}
-
-	/**
-	 * 以post方式提交xml到对应的接口url
-	 *
-	 * @param string $url url
-	 * @param string $xml 需要post的xml数据
-	 * @param bool   $useCert 是否需要证书，默认不需要
-	 * @param int    $second url执行超时时间，默认30s
-	 * @return mixed
-	 * @throws PaymentException
-	 */
-	protected function request($url, $xml, $useCert = false, $second = 30){
-		$ch = curl_init();
-
-		//设置超时
-		curl_setopt($ch, CURLOPT_TIMEOUT, $second);
-
-		//如果有配置代理这里就设置代理
-		if($this->has('curl_proxy_host')
-		   && $this->get('curl_proxy_host') != "0.0.0.0"
-		   && $this->has('curl_proxy_port')
-		   && $this->get('curl_proxy_port') != 0){
-			curl_setopt($ch, CURLOPT_PROXY, $this->get('curl_proxy_host'));
-			curl_setopt($ch, CURLOPT_PROXYPORT, $this->get('curl_proxy_port'));
-		}
-		curl_setopt($ch, CURLOPT_URL, $url);
-
-		//设置header
-		curl_setopt($ch, CURLOPT_HEADER, false);
-		//要求结果为字符串且输出到屏幕上
-		curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-
-		//设置证书
-		if($useCert == true){
-			//严格校验
-			curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, true);
-			curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 2);
-
-			//使用证书：cert 与 key 分别属于两个.pem文件
-			curl_setopt($ch, CURLOPT_SSLCERTTYPE, 'PEM');
-			curl_setopt($ch, CURLOPT_SSLCERT, $this->getSslCert());
-			curl_setopt($ch, CURLOPT_SSLKEYTYPE, 'PEM');
-			curl_setopt($ch, CURLOPT_SSLKEY, $this->getSslKey());
-		}else{
-			curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
-			curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, false);
-		}
-
-		//post提交方式
-		curl_setopt($ch, CURLOPT_POST, true);
-		curl_setopt($ch, CURLOPT_POSTFIELDS, $xml);
-
-		//运行curl
-		$data = curl_exec($ch);
-		//返回结果
-		if($data){
-			curl_close($ch);
-			return $data;
-		}else{
-			$errCode = curl_errno($ch);
-			$errMsg = curl_error($ch);
-			curl_close($ch);
-			throw new PaymentException("curl error:{$errMsg}", $errCode);
 		}
 	}
 

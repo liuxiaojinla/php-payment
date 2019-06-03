@@ -21,6 +21,7 @@
 		"ext-json":"*",
 		"ext-dom":"*",
 		"ext-libxml":"*",
-		"ext-simplexml":"*"
+		"ext-simplexml":"*",
+		"ext-ctype":"*"
 	}
 }

@@ -7,7 +7,9 @@
  * @author BD<657306123@qq.com>
  */
 
-namespace xin\payment\data;
+namespace xin\payment;
+
+;
 
 /**
  * 退款查询
@@ -22,7 +24,7 @@ namespace xin\payment\data;
  *
  * @package xin\payment\data
  */
-class RefundQueryPaymentOptions extends PaymentOptions{
+class RefundQueryOptions extends PaymentOptions{
 
 	/**
 	 * 获取订单号

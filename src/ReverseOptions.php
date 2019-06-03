@@ -7,7 +7,9 @@
  * @author BD<657306123@qq.com>
  */
 
-namespace xin\payment\data;
+namespace xin\payment;
+
+;
 
 /**
  * 撤销订单
@@ -18,7 +20,7 @@ namespace xin\payment\data;
  *
  * @package xin\payment\data
  */
-class ReversePaymentOptions extends PaymentOptions{
+class ReverseOptions extends PaymentOptions{
 
 	/**
 	 * 获取订单号

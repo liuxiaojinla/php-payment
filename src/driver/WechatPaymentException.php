@@ -8,6 +8,7 @@
  */
 namespace xin\payment\driver;
 
+use Throwable;
 use xin\payment\PaymentException;
 
 /**
@@ -104,7 +105,7 @@ class WechatPaymentException extends PaymentException{
 	 * @param string     $errCode [optional] The Exception code.
 	 * @param \Throwable $previous [optional] The previous throwable used for the exception chaining.
 	 */
-	public function __construct($message = "", $errCode = null, \Throwable $previous = null){
+	public function __construct($message = "", $errCode = null, Throwable $previous = null){
 		parent::__construct($message, 0, $previous);
 		$this->errCode = $errCode;
 	}

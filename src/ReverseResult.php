@@ -7,13 +7,15 @@
  * @author BD<657306123@qq.com>
  */
 
-namespace xin\payment\data;
+namespace xin\payment;
+
+;
 
 /**
  * 撤销订单结果
  *
  * @package xin\payment\data
  */
-class ReversePaymentResult extends PaymentResult{
+class ReverseResult extends PaymentResult{
 
 }

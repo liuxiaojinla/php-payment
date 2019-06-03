@@ -7,7 +7,9 @@
  * @author BD<657306123@qq.com>
  */
 
-namespace xin\payment\data;
+namespace xin\payment;
+
+;
 
 /**
  * 统一下单参数
@@ -56,6 +58,6 @@ namespace xin\payment\data;
  *
  * @package xin\payment\data
  */
-class UnifiedOrderPaymentOptions extends PaymentOptions{
+class UnifiedOrderOptions extends PaymentOptions{
 
 }

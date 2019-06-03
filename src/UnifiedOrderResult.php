@@ -7,13 +7,15 @@
  * @author BD<657306123@qq.com>
  */
 
-namespace xin\payment\data;
+namespace xin\payment;
+
+;
 
 /**
  * 统一下单结果
  *
  * @package xin\payment\data
  */
-class UnifiedOrderPaymentResult extends PaymentResult{
+class UnifiedOrderResult extends PaymentResult{
 
 }

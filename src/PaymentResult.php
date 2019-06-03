@@ -7,10 +7,7 @@
  * @author BD<657306123@qq.com>
  */
 
-namespace xin\payment\data;
-
-use xin\payment\PaymentData;
-use xin\payment\PaymentException;
+namespace xin\payment;
 
 /**
  * 请求结果
@@ -18,15 +15,6 @@ use xin\payment\PaymentException;
  * @package xin\payment\data
  */
 class PaymentResult extends PaymentData{
-
-	/**
-	 * PaymentResult constructor.
-	 *
-	 * @param array $options
-	 */
-	protected function __construct(array $options){
-		$this->options = $options;
-	}
 
 	/**
 	 * 使用xml字符串构建一个PaymentResult对象

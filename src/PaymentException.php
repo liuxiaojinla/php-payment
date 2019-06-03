@@ -9,12 +9,14 @@
 
 namespace xin\payment;
 
+use Exception;
+
 /**
  * 支付异常
  *
  * @package xin\payment
  */
-class PaymentException extends \Exception{
+class PaymentException extends Exception{
 
 	/**
 	 * 获取错误原因

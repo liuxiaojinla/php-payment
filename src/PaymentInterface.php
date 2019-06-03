@@ -9,21 +9,6 @@
 
 namespace xin\payment;
 
-use xin\payment\data\CloseOrderPaymentOptions;
-use xin\payment\data\CloseOrderPaymentResult;
-use xin\payment\data\OrderQueryPaymentOptions;
-use xin\payment\data\OrderQueryPaymentResult;
-use xin\payment\data\PaymentOptions;
-use xin\payment\data\PaymentResult;
-use xin\payment\data\RefundPaymentOptions;
-use xin\payment\data\RefundPaymentResult;
-use xin\payment\data\RefundQueryPaymentOptions;
-use xin\payment\data\RefundQueryPaymentResult;
-use xin\payment\data\ReversePaymentOptions;
-use xin\payment\data\ReversePaymentResult;
-use xin\payment\data\UnifiedOrderPaymentOptions;
-use xin\payment\data\UnifiedOrderPaymentResult;
-
 /**
  * Interface PaymentInterface
  *
@@ -34,59 +19,60 @@ interface PaymentInterface{
 	/**
 	 * 统一下单
 	 *
-	 * @param UnifiedOrderPaymentOptions $input
-	 * @return UnifiedOrderPaymentResult
+	 * @param UnifiedOrderOptions $input
+	 * @return UnifiedOrderResult
 	 * @throws PaymentException
 	 */
-	public function unifiedOrder(UnifiedOrderPaymentOptions $input);
+	public function unifiedOrder(UnifiedOrderOptions $input);
 
 	/**
 	 * 查询订单
 	 *
-	 * @param OrderQueryPaymentOptions $input
-	 * @return OrderQueryPaymentResult
+	 * @param OrderQueryOptions $input
+	 * @return OrderQueryResult
 	 * @throws PaymentException
 	 */
-	public function orderQuery(OrderQueryPaymentOptions $input);
+	public function orderQuery(OrderQueryOptions $input);
 
 	/**
 	 * 关闭订单
 	 *
-	 * @param CloseOrderPaymentOptions $input
-	 * @return CloseOrderPaymentResult
+	 * @param CloseOrderOptions $input
+	 * @return CloseOrderResult
 	 * @throws PaymentException
 	 */
-	public function closeOrder(CloseOrderPaymentOptions $input);
+	public function closeOrder(CloseOrderOptions $input);
 
 	/**
 	 * 申请退款
 	 *
-	 * @param RefundPaymentOptions $input
-	 * @return RefundPaymentResult
+	 * @param RefundOptions $input
+	 * @return RefundResult
 	 * @throws PaymentException
 	 */
-	public function refund(RefundPaymentOptions $input);
+	public function refund(RefundOptions $input);
 
 	/**
 	 * 退款查询
 	 *
-	 * @param RefundQueryPaymentOptions $input
-	 * @return RefundQueryPaymentResult
+	 * @param RefundQueryOptions $input
+	 * @return RefundQueryResult
 	 * @throws PaymentException
 	 */
-	public function refundQuery(RefundQueryPaymentOptions $input);
+	public function refundQuery(RefundQueryOptions $input);
 
 	/**
 	 * 撤销订单
 	 *
-	 * @param ReversePaymentOptions $input
-	 * @return ReversePaymentResult
+	 * @param ReverseOptions $input
+	 * @return ReverseResult
 	 * @throws PaymentException
 	 */
-	public function reverse(ReversePaymentOptions $input);
+	public function reverse(ReverseOptions $input);
 
 	/**
 	 * 设置支付签名
+	 *
 	 * @param PaymentOptions $options
 	 * @throws PaymentException
 	 */
@@ -94,6 +80,7 @@ interface PaymentInterface{
 
 	/**
 	 * 验证签名
+	 *
 	 * @param PaymentResult $result
 	 * @throws PaymentException
 	 */
