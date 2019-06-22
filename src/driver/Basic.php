@@ -27,6 +27,13 @@ use xin\payment\UnifiedOrderResult;
 class Basic extends Payment{
 
 	/**
+	 * 引擎列表
+	 *
+	 * @var array
+	 */
+	protected $engines = [];
+
+	/**
 	 * Basic constructor.
 	 *
 	 * @param array $config
@@ -128,9 +135,20 @@ class Basic extends Payment{
 	/**
 	 * 获取引擎
 	 *
-	 * @param string $engine
+	 * @param string $type
 	 * @return \xin\payment\PaymentInterface
+	 * @throws \xin\payment\PaymentException
 	 */
-	protected function getEngine($engine){
+	protected function getEngine($type){
+		if(empty($type)) throw new PaymentException('交易引擎必须填写！');
+		$type = strtolower($type);
+
+		$engine = str_replace("_", "", ucwords($type, "_"));
+		if(!isset($this->engines[$engine])){
+			$class = "\\xin\\payment\\driver\\engine\\{$engine}";
+			$options = isset($this->config[$type]) ? $this->config[$type] : [];
+			$this->engines[$engine] = new $class($options);
+		}
+		return $this->engines[$engine];
 	}
 }

@@ -28,19 +28,34 @@ final class Util{
 	}
 
 	/**
-	 * 改变数组中多个key的名称
+	 * 检查数组里面的键是否为空
+	 *
+	 * @param array  $arr
+	 * @param string $key
+	 * @return bool
+	 */
+	public static function isArrayKeyEmpty(array $arr, $key){
+		return !isset($arr[$key]) || $arr[$key] === null || $arr[$key] === '';
+	}
+
+	/**
+	 * 转换数组里面的key
 	 *
 	 * @param array $arr
-	 * @param array $keysMap
+	 * @param array $keyMaps
 	 * @return array
 	 */
-	public static function transformKeys(array $arr, array $keysMap){
-		foreach($keysMap as $key => $newKey){
-			if(!isset($arr[$key])) continue;
+	public static function transformKeys(array $arr, array $keyMaps){
+		foreach($keyMaps as $oldKey => $newKey){
+			if(!array_key_exists($oldKey, $arr)) continue;
 
-			$value = &$arr[$key];
-			unset($arr[$key]);
-			$arr[$newKey] = $value;
+			if(is_callable($newKey)){
+				list($newKey, $value) = call_user_func($newKey, $arr[$oldKey], $oldKey, $arr);
+				$arr[$newKey] = $value;
+			}else{
+				$arr[$newKey] = $arr[$oldKey];
+			}
+			unset($arr[$oldKey]);
 		}
 		return $arr;
 	}

@@ -17,12 +17,14 @@ use xin\payment\Payment;
 use xin\payment\PaymentException;
 use xin\payment\PaymentOptions;
 use xin\payment\PaymentResult;
+use xin\payment\PayType;
 use xin\payment\RefundOptions;
 use xin\payment\RefundQueryOptions;
 use xin\payment\RefundQueryResult;
 use xin\payment\RefundResult;
 use xin\payment\ReverseOptions;
 use xin\payment\ReverseResult;
+use xin\payment\TradeType;
 use xin\payment\UnifiedOrderOptions;
 use xin\payment\UnifiedOrderResult;
 use xin\payment\Util;
@@ -49,8 +51,8 @@ class Wechat extends Payment{
 	 */
 	public function __construct(array $config){
 		// app_id 必填
-		if(!isset($config['app_id']) || empty($config['app_id'])){
-			throw new PaymentException('缺少必填参数 app_id');
+		if(!isset($config['appid']) || empty($config['appid'])){
+			throw new PaymentException('缺少必填参数 appid');
 		}
 
 		// mch_id 必填
@@ -77,7 +79,7 @@ class Wechat extends Payment{
 	public function unifiedOrder(UnifiedOrderOptions $input){
 		$input->check([
 			'out_trade_no', 'body',
-			'total_fee', 'trade_type',
+			'total_fee', TradeType::__NAME__,
 		]);
 
 		if($input->getTradeType() == "JSAPI" && !$input->has('openid')){
@@ -90,9 +92,13 @@ class Wechat extends Payment{
 
 		// 转换keys
 		$input = $input->transformKeys([
-			'start_time'  => 'time_start',
-			'expire_time' => 'time_expire',
+			'start_time'        => 'time_start',
+			'expire_time'       => 'time_expire',
+			TradeType::__NAME__ => function($value){
+				return ['trade_type', strtoupper($value)];
+			},
 		]);
+
 		//终端ip
 		$input->set('spbill_create_ip', isset($_SERVER['REMOTE_ADDR']) ? $_SERVER['REMOTE_ADDR'] : '');
 
@@ -143,6 +149,7 @@ class Wechat extends Payment{
 		$input->set('appid', $this->config['appid']);//公众账号ID
 		$input->set('mch_id', $this->config['mch_id']);//商户号
 		$input->set('nonce_str', Util::nonceStr());//随机字符串
+		$input->remove(PayType::__NAME__);
 		$this->setSign($input);
 		return $input;
 	}
@@ -153,7 +160,7 @@ class Wechat extends Payment{
 	 * @param PaymentOptions $options
 	 */
 	public function setSign(PaymentOptions $options){
-		$sign = self::makeSign($this->getSignKey(), $options->toArray());
+		$sign = self::makeSign($this->config['sign_key'], $options->toArray());
 		$options->setSign($sign);
 	}
 
