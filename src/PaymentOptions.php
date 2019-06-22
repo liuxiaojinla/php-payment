@@ -11,8 +11,6 @@ namespace xin\payment;
 
 /**
  * 请求参数
- * @method string getPayType() 获取支付类型
- * @method string setPayType($payType) 设置支付类型
  *
  * @package xin\payment\data
  */

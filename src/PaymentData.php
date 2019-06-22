@@ -99,6 +99,24 @@ class PaymentData{
 	}
 
 	/**
+	 * 获取支付引擎类型
+	 *
+	 * @return string
+	 */
+	public function getPayType(){
+		return $this->get(PayType::__NAME__);
+	}
+
+	/**
+	 * 设置支付引擎类型
+	 *
+	 * @param string $payType
+	 */
+	public function setPayType($payType){
+		$this->set(PayType::__NAME__, $payType);
+	}
+
+	/**
 	 * 动态调用函数
 	 *
 	 * @param string $name

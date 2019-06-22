@@ -22,8 +22,6 @@ namespace xin\payment;
  * @method string getTotalFee() 获取订单金额
  * @method void setTotalFee($totalFee) 设置订单金额
  * @method bool hasTotalFee() 是否设置订单金额
- * @method string getTradeType() 获取订单类型
- * @method void setTradeType($tradeType) 设置订单类型
  * @method bool hasTradeType() 是否设置订单类型
  * @method string getNotifyUrl() 获取回调地址
  * @method void setNotifyUrl($notifyUrl) 设置回调地址
@@ -59,4 +57,22 @@ namespace xin\payment;
  * @package xin\payment\data
  */
 class UnifiedOrderOptions extends PaymentOptions{
+
+	/**
+	 * 获取交易类型
+	 *
+	 * @return string
+	 */
+	public function getTradeType(){
+		return $this->get(TradeType::__NAME__);
+	}
+
+	/**
+	 * 设置交易类型
+	 *
+	 * @param string $tradeType
+	 */
+	public function setTradeType($tradeType){
+		$this->set(TradeType::__NAME__, $tradeType);
+	}
 }

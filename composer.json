@@ -2,6 +2,7 @@
 	"name":"xin/payment",
 	"description":"一套API可以同时使用微信支付，支付宝支付",
 	"type":"library",
+	"version":"2.0.0",
 	"authors":[
 		{
 			"name":"晋",

@@ -9,7 +9,17 @@
 
 namespace xin\payment;
 
+/**
+ * 支付引擎类型
+ *
+ * @package xin\payment
+ */
 final class PayType{
+
+	/**
+	 * 数据键名
+	 */
+	const __NAME__ = '__pay_type__';
 
 	/**
 	 * 微信
