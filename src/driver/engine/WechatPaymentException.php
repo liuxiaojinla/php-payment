@@ -6,7 +6,7 @@
  * @license http://www.apache.org/licenses/LICENSE-2.0
  * @author BD<657306123@qq.com>
  */
-namespace xin\payment\driver;
+namespace xin\payment\driver\engine;
 
 use Throwable;
 use xin\payment\PaymentException;

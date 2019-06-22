@@ -8,8 +8,6 @@
 
 namespace xin\payment;
 
-use xin\core\Container;
-
 final class Util{
 
 	/**

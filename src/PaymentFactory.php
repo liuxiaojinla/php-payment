@@ -11,13 +11,11 @@ namespace xin\payment;
 
 use BadMethodCallException;
 use RuntimeException;
-use xin\payment\driver\Wechat;
 
 /**
  * 支付API工厂
  * @method string getAppId() 获取AppId
- * @method Wechat factoryWechat(array $options) static 获取微信支付实例
- * @method Wechat factoryAlipay(array $options) static 获取支付宝支付实例
+ * @method \xin\payment\driver\Basic factoryBasic(array $options) static 获取默认的聚合支付实例
  *
  * @package xin\payment
  */
@@ -39,7 +37,7 @@ abstract class PaymentFactory implements PaymentInterface{
 	}
 
 	/**
-	 * 构建支付API实例
+	 * 构聚合建支付API实例
 	 *
 	 * @param string $driver
 	 * @param array  $options

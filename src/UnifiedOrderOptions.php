@@ -59,5 +59,4 @@ namespace xin\payment;
  * @package xin\payment\data
  */
 class UnifiedOrderOptions extends PaymentOptions{
-
 }

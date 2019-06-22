@@ -13,7 +13,7 @@ namespace xin\payment;
  *
  * @package xin\payment
  */
-abstract class Payment{
+abstract class Payment implements PaymentInterface{
 
 	/**
 	 * 配置参数

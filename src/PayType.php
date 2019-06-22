@@ -9,11 +9,20 @@
 
 namespace xin\payment;
 
-/**
- * 撤销订单结果
- *
- * @package xin\payment\data
- */
-class ReverseResult extends PaymentResult{
+final class PayType{
 
+	/**
+	 * 微信
+	 */
+	const WECHAT = 'wechat';
+
+	/**
+	 * 支付宝
+	 */
+	const ALIPAY = 'alipay';
+
+	/**
+	 * PayType constructor.
+	 */
+	protected function __construct(){ }
 }

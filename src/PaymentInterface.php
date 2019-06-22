@@ -69,14 +69,13 @@ interface PaymentInterface{
 	 * @throws PaymentException
 	 */
 	public function reverse(ReverseOptions $input);
-
-	/**
-	 * 设置支付签名
-	 *
-	 * @param PaymentOptions $options
-	 * @throws PaymentException
-	 */
-	public function setSign(PaymentOptions $options);
+	//	/**
+	//	 * 设置支付签名
+	//	 *
+	//	 * @param PaymentOptions $input
+	//	 * @throws PaymentException
+	//	 */
+	//	public function setSign(PaymentOptions $input);
 
 	/**
 	 * 验证签名

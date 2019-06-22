@@ -7,7 +7,7 @@
  * @author BD<657306123@qq.com>
  */
 
-namespace xin\payment\driver;
+namespace xin\payment\driver\engine;
 
 use xin\payment\CloseOrderOptions;
 use xin\payment\CloseOrderResult;
