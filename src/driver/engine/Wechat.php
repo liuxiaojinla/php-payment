@@ -152,9 +152,6 @@ class Wechat extends Payment{
 		$url = "https://api.mch.weixin.qq.com/pay/orderquery";
 		$result = $this->result($url, $input, OrderQueryResult::class, false, 6);
 		return $result->transformKeys([
-			'trade_state' => function($value){
-				return ['trade_state', $value];
-			},
 		]);
 	}
 

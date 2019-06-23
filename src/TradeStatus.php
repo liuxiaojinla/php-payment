@@ -19,17 +19,22 @@ interface TradeStatus{
 	/**
 	 * 用户支付中
 	 */
-	const USER_PAYING = 'USER_PAYING';
+	const USER_PAYING = 'USERPAYING';
 
 	/**
 	 * 用户支付失败
 	 */
-	const PAY_ERROR = 'PAY_ERROR';
+	const PAY_ERROR = 'PAYERROR';
 
 	/**
 	 * 用户支付成功
 	 */
 	const PAY_SUCCESS = 'SUCCESS';
+
+	/**
+	 * 未支付
+	 */
+	const NOT_PAY = 'NOTPAY';
 
 	/**
 	 * 交易处理中
