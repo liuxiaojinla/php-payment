@@ -17,5 +17,4 @@ namespace xin\payment;
  * @package xin\payment\data
  */
 class RefundQueryResult extends PaymentResult{
-
 }

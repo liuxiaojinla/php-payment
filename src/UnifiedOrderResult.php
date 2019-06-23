@@ -18,4 +18,12 @@ namespace xin\payment;
  */
 class UnifiedOrderResult extends PaymentResult{
 
+	/**
+	 * 获取JS支付信息
+	 *
+	 * @return array
+	 */
+	public function getJsPayInfo(){
+		return $this->get('__jspay_info__');
+	}
 }

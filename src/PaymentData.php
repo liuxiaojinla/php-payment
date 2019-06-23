@@ -13,7 +13,7 @@ namespace xin\payment;
  *
  * @package xin\payment
  */
-class PaymentData{
+class PaymentData implements \ArrayAccess, \IteratorAggregate, \JsonSerializable{
 
 	/**
 	 * @var array
@@ -99,6 +99,15 @@ class PaymentData{
 	}
 
 	/**
+	 * 获取原始数据
+	 *
+	 * @return array
+	 */
+	public function toArray(){
+		return $this->data;
+	}
+
+	/**
 	 * 获取支付引擎类型
 	 *
 	 * @return string
@@ -138,16 +147,6 @@ class PaymentData{
 	}
 
 	/**
-	 * 检查字段是否存在
-	 *
-	 * @param string $name
-	 * @return bool
-	 */
-	public function __isset($name){
-		return isset($this->data[$name]);
-	}
-
-	/**
 	 * 配置是否存在
 	 *
 	 * @param string|array $key
@@ -164,16 +163,6 @@ class PaymentData{
 			if(isset($this->data[$key])) return true;
 		}
 		return false;
-	}
-
-	/**
-	 * 获取字段
-	 *
-	 * @param string $name
-	 * @return mixed
-	 */
-	public function __get($name){
-		return $this->data[$name];
 	}
 
 	/**
@@ -197,16 +186,6 @@ class PaymentData{
 	}
 
 	/**
-	 * 设置数据
-	 *
-	 * @param string $name
-	 * @param mixed  $value
-	 */
-	public function __set($name, $value){
-		$this->set($name, $value);
-	}
-
-	/**
 	 * 设置配置项
 	 *
 	 * @param string $name
@@ -221,19 +200,49 @@ class PaymentData{
 	/**
 	 * 移除字段
 	 *
-	 * @param string $name
+	 * @param string $key
 	 */
-	public function __unset($name){
-		$this->remove($name);
+	public function remove($key){
+		unset($this->data[$key]);
+	}
+
+	/**
+	 * 检查字段是否存在
+	 *
+	 * @param string $name
+	 * @return bool
+	 */
+	public function __isset($name){
+		return isset($this->data[$name]);
+	}
+
+	/**
+	 * 获取字段
+	 *
+	 * @param string $name
+	 * @return mixed
+	 */
+	public function __get($name){
+		return $this->data[$name];
+	}
+
+	/**
+	 * 设置数据
+	 *
+	 * @param string $name
+	 * @param mixed  $value
+	 */
+	public function __set($name, $value){
+		$this->set($name, $value);
 	}
 
 	/**
 	 * 移除字段
 	 *
-	 * @param string $key
+	 * @param string $name
 	 */
-	public function remove($key){
-		unset($this->data[$key]);
+	public function __unset($name){
+		$this->remove($name);
 	}
 
 	/**
@@ -334,15 +343,6 @@ class PaymentData{
 	 */
 	public function jsonSerialize(){
 		return $this->toArray();
-	}
-
-	/**
-	 * 获取原始数据
-	 *
-	 * @return array
-	 */
-	public function toArray(){
-		return $this->data;
 	}
 
 }
