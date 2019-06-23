@@ -7,6 +7,7 @@
  */
 use xin\payment\PaymentException;
 use xin\payment\PayType;
+use xin\payment\RefundOptions;
 use xin\payment\TradeType;
 use xin\payment\UnifiedOrderOptions;
 
@@ -16,18 +17,17 @@ require_once './init.php';
 $orderSn = time();
 var_dump($orderSn);
 
-$input = new UnifiedOrderOptions();
-$input->setOutTradeNo($orderSn);
-$input->setBody('测试支付');
+$input = new RefundOptions();
+$input->setOutTradeNo('1561279171');
+$input->setOutRefundNo($orderSn);
 $input->setTotalFee(100);
-$input->setNotifyUrl('https://www.baidu.com');
-$input->setOpenid('o9F2bs2V9FUlaoeggfIo94YRWVS4');
+$input->setRefundFee(100);
+$input->setOpUserId(100);
 $input->setPayType(PayType::WECHAT);
-$input->setTradeType(TradeType::JSAPI);
 
 try{
 	$payment = get_payment();
-	$result = $payment->unifiedOrder($input);
+	$result = $payment->refund($input);
 	var_dump($result);
 }catch(PaymentException $e){
 	var_dump("error:".$e->getMessage());
