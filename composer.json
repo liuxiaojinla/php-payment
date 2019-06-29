@@ -22,6 +22,8 @@
 		"ext-dom":"*",
 		"ext-libxml":"*",
 		"ext-simplexml":"*",
-		"ext-ctype":"*"
+		"ext-ctype":"*",
+		"ext-mbstring":"*",
+		"ext-openssl":"*"
 	}
 }

@@ -53,6 +53,8 @@ namespace xin\payment;
  * @method string getOpenid() 获取用户标识
  * @method void setOpenid($openid) 设置用户标识
  * @method bool hasOpenid() 是否设置用户标识
+ * @method void setSubAppid($subAppid) 设置子appid
+ * @method setSubOpenid($subOpenid) 设置子openid
  *
  * @package xin\payment\data
  */

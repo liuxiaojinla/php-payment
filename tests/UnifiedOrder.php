@@ -17,6 +17,8 @@ $orderSn = time();
 var_dump($orderSn);
 
 $input = new UnifiedOrderOptions();
+$input->setSubAppid('wx12345678910');
+$input->setSubOpenid('o9F2bs2V9FUlaoeggfIo94YRWVS4');
 $input->setOutTradeNo($orderSn);
 $input->setBody('测试支付');
 $input->setTotalFee(100);

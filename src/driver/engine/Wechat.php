@@ -71,8 +71,14 @@ class Wechat extends Payment{
 	 * @throws PaymentException
 	 */
 	public function unifiedOrder(UnifiedOrderOptions $input){
-		if($input->getTradeType() == "JSAPI" && !$input->has('openid')){
-			throw new PaymentException("统一支付接口中，缺少必填参数openid！trade_type为JSAPI时，openid为必填参数！");
+		if($input->getTradeType() == "JSAPI"){
+			if($input->has('sub_appid') && !$input->has('sub_openid')){
+				throw new PaymentException("统一支付接口中，缺少必填参数sub_openid！sub_appid不为空时，sub_openid为必填参数！");
+			}
+
+			if(!$input->has('openid')){
+				throw new PaymentException("统一支付接口中，缺少必填参数openid！trade_type为JSAPI时，openid为必填参数！");
+			}
 		}
 
 		if($input->getTradeType() == "NATIVE" && !$input->has('product_id')){
@@ -125,7 +131,7 @@ class Wechat extends Payment{
 		}
 
 		$info = [
-			'appId'     => $result["appid"],
+			'appId'     => isset($result["sub_appid"]) ? $result["sub_appid"] : $result["appid"],
 			'timeStamp' => time(),
 			'nonceStr'  => Util::nonceStr(),
 			'package'   => "prepay_id=".$result['prepay_id'],
