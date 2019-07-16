@@ -1,37 +1,72 @@
 # xin-payment
 
 #### 介绍
-微信支付、支付宝支付API统一化
+统一化微信支付、支付宝支付API，目前仅适配了微信支付
+
 
 #### 软件架构
-软件架构说明
-
+使用工厂模式进行统一管理不同驱动，使用者无需知道工厂类是如何构建一个支付驱动实例
 
 #### 安装教程
 
-1. xxxx
-2. xxxx
-3. xxxx
+`composer require xin/payment`
 
 #### 使用说明
+**统一下单**
 
-1. xxxx
-2. xxxx
-3. xxxx
+    `$orderSn = time();
+    var_dump($orderSn);
+    
+    $input = new UnifiedOrderOptions();
+    $input->setSubAppid('wx12345678910');
+    $input->setSubOpenid('o9F2bs2V9FUlaoeggfIo94YRWVS4');
+    $input->setOutTradeNo($orderSn);
+    $input->setBody('测试支付');
+    $input->setTotalFee(100);
+    $input->setNotifyUrl('https://www.baidu.com');
+    $input->setOpenid('o9F2bs2V9FUlaoeggfIo94YRWVS4');
+    $input->setPayType(PayType::WECHAT);
+    $input->setTradeType(TradeType::JSAPI);
+    
+    try{
+    	$payment = get_payment();
+    	$result = $payment->unifiedOrder($input);
+    	var_dump($result);
+    }catch(PaymentException $e){
+    	var_dump("error:".$e->getMessage());
+    }`
 
-#### 参与贡献
+**查询订单**
 
-1. Fork 本仓库
-2. 新建 Feat_xxx 分支
-3. 提交代码
-4. 新建 Pull Request
+    `$input = new OrderQueryOptions();
+    $input->setOutTradeNo(1561279171);
+    $input->setPayType(PayType::WECHAT);
+    
+    try{
+        $payment = get_payment();
+        $result = $payment->orderQuery($input);
+        var_dump($result);
+    }catch(PaymentException $e){
+        var_dump("error:".$e->getMessage());
+    }`
 
+**退款**
 
-#### 码云特技
-
-1. 使用 Readme\_XXX.md 来支持不同的语言，例如 Readme\_en.md, Readme\_zh.md
-2. 码云官方博客 [blog.gitee.com](https://blog.gitee.com)
-3. 你可以 [https://gitee.com/explore](https://gitee.com/explore) 这个地址来了解码云上的优秀开源项目
-4. [GVP](https://gitee.com/gvp) 全称是码云最有价值开源项目，是码云综合评定出的优秀开源项目
-5. 码云官方提供的使用手册 [https://gitee.com/help](https://gitee.com/help)
-6. 码云封面人物是一档用来展示码云会员风采的栏目 [https://gitee.com/gitee-stars/](https://gitee.com/gitee-stars/)
+    `$orderSn = time();
+    var_dump($orderSn);
+    
+    $input = new RefundOptions();
+    $input->setOutTradeNo('1561279171');
+    $input->setOutRefundNo($orderSn);
+    $input->setTotalFee(100);
+    $input->setRefundFee(100);
+    $input->setOpUserId(100);
+    $input->setPayType(PayType::WECHAT);
+    
+    try{
+        $payment = get_payment();
+        $result = $payment->refund($input);
+        var_dump($result);
+    }catch(PaymentException $e){
+        var_dump("error:".$e->getMessage());
+    }`
