@@ -12,7 +12,7 @@ use xin\payment\CloseOrderOptions;
 use xin\payment\CloseOrderResult;
 use xin\payment\OrderQueryOptions;
 use xin\payment\OrderQueryResult;
-use xin\payment\Payment;
+use xin\payment\AbsPayment;
 use xin\payment\PaymentException;
 use xin\payment\PaymentResult;
 use xin\payment\RefundOptions;
@@ -24,7 +24,7 @@ use xin\payment\ReverseResult;
 use xin\payment\UnifiedOrderOptions;
 use xin\payment\UnifiedOrderResult;
 
-class Basic extends Payment{
+class Basic extends AbsPayment{
 
 	/**
 	 * 引擎列表
@@ -129,7 +129,7 @@ class Basic extends Payment{
 	public function checkSign(PaymentResult $result){
 		$payType = $result->getPayType();
 		$engine = $this->getEngine($payType);
-		return $engine->checkSign($result);
+		$engine->checkSign($result);
 	}
 
 	/**

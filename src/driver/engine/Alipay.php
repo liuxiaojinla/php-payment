@@ -13,7 +13,7 @@ use xin\payment\CloseOrderOptions;
 use xin\payment\CloseOrderResult;
 use xin\payment\OrderQueryOptions;
 use xin\payment\OrderQueryResult;
-use xin\payment\Payment;
+use xin\payment\AbsPayment;
 use xin\payment\PaymentException;
 use xin\payment\PaymentResult;
 use xin\payment\RefundOptions;
@@ -25,7 +25,7 @@ use xin\payment\ReverseResult;
 use xin\payment\UnifiedOrderOptions;
 use xin\payment\UnifiedOrderResult;
 
-class Alipay extends Payment{
+class Alipay extends AbsPayment{
 
 	//网关
 	const gatewayUrl = "https://openapi.alipay.com/gateway.do";

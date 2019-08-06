@@ -1,54 +1,57 @@
 <?php
 /**
- * The following code, none of which has BUG.
+ * I know no such things as genius,it is nothing but labor and diligence.
  *
- * @author: BD<liuxingwu@duoguan.com>
- * @date: 2019/6/3 17:01
+ * @copyright (c) 2015~2019 BD All rights reserved.
+ * @license http://www.apache.org/licenses/LICENSE-2.0
+ * @author BD<657306123@qq.com>
  */
 
 namespace xin\payment;
 
+use RuntimeException;
+
 /**
- * Class Payment
+ * 支付API工厂
+ * @method string getAppId() 获取AppId
+ * @method \xin\payment\driver\Basic basic(array $options) static 获取默认的聚合支付实例
  *
  * @package xin\payment
  */
-abstract class Payment implements PaymentInterface{
+class Payment{
 
 	/**
-	 * 配置参数
+	 * 静态调用处理
 	 *
-	 * @var array
-	 */
-	protected $config = [];
-
-	/**
-	 * Payment constructor.
-	 *
-	 * @param array $config
-	 */
-	public function __construct(array $config){
-		$this->config = $config;
-	}
-
-	/**
-	 * 获取配置
-	 *
-	 * @param string $key
-	 * @param mixed  $default
+	 * @param string $name
+	 * @param array  $arguments
 	 * @return mixed
 	 */
-	public function getConfig($key, $default = null){
-		return isset($this->config[$key]) ? $this->config[$key] : $default;
+	public static function __callStatic($name, $arguments){
+		return self::factory($name, $arguments[0]);
+		//		if(strpos($name, "factory") === 0){
+		//			$driver = substr($name, 7);
+		//			return self::factory($driver, $arguments[0]);
+		//		}
+		//		throw new BadMethodCallException("{$name}方法不存在！");
 	}
 
 	/**
-	 * 配置是否存在
+	 * 构聚合建支付API实例
 	 *
-	 * @param string $key
-	 * @return bool
+	 * @param string $driver
+	 * @param array  $options
+	 * @return mixed
 	 */
-	public function hasConfig($key){
-		return isset($this->config[$key]);
+	public static function factory($driver, $options = []){
+		if(stripos($driver, '\\') !== 0){
+			$driver = "\\xin\\payment\\driver\\{$driver}";
+		}
+
+		if(!class_exists($driver)){
+			throw new RuntimeException("支付驱动不存在：{$driver}");
+		}
+
+		return new $driver($options);
 	}
 }

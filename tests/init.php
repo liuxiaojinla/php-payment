@@ -1,5 +1,5 @@
 <?php
-use xin\payment\PaymentFactory;
+use xin\payment\Payment;
 
 /**
  * The following code, none of which has BUG.
@@ -9,7 +9,7 @@ use xin\payment\PaymentFactory;
  */
 
 function get_payment(){
-	return PaymentFactory::factoryBasic([
+	return Payment::basic([
 		'wechat' => [
 			'appid'  => '',
 			'mch_id' => '',

@@ -13,7 +13,7 @@ use xin\payment\CloseOrderOptions;
 use xin\payment\CloseOrderResult;
 use xin\payment\OrderQueryOptions;
 use xin\payment\OrderQueryResult;
-use xin\payment\Payment;
+use xin\payment\AbsPayment;
 use xin\payment\PaymentException;
 use xin\payment\PaymentOptions;
 use xin\payment\PaymentResult;
@@ -35,7 +35,7 @@ use xin\payment\Util;
  *
  * @package xin\payment\driver
  */
-class Wechat extends Payment{
+class Wechat extends AbsPayment{
 
 	/**
 	 * WeChat constructor.
