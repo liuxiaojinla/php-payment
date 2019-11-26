@@ -7,15 +7,21 @@
  * @author BD<657306123@qq.com>
  */
 
-namespace xin\payment;
-
-;
+namespace xin\payment\entity;
 
 /**
- * 申请退款结果
+ * 统一下单结果
  *
  * @package xin\payment\data
  */
-class RefundResult extends PaymentResult{
+class UnifiedOrderResult extends PaymentResult{
 
+	/**
+	 * 获取JS支付信息
+	 *
+	 * @return array
+	 */
+	public function getJsPayInfo(){
+		return $this->get('__jspay_info__');
+	}
 }

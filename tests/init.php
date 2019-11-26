@@ -1,4 +1,5 @@
 <?php
+use xin\payment\ConfigInterface;
 use xin\payment\Payment;
 
 /**
@@ -9,11 +10,25 @@ use xin\payment\Payment;
  */
 
 function get_payment(){
-	return Payment::basic([
-		'wechat' => [
-			'appid'  => '',
-			'mch_id' => '',
-			'key'    => '',
-		],
-	]);
+	//	[
+	//		'wechat' => [
+	//			'appid'  => '',
+	//			'mch_id' => '',
+	//			'key'    => '',
+	//		],
+	//	]
+	return new Payment(new class implements ConfigInterface{
+
+		public function getWechatAppId(){
+			return "";
+		}
+
+		public function getWechatMchId(){
+			return "";
+		}
+
+		public function getWechatKey(){
+			return "";
+		}
+	});
 }

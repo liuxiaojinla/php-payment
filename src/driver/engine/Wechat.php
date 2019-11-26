@@ -9,11 +9,11 @@
 
 namespace xin\payment\driver\engine;
 
+use xin\payment\AbsPayment;
 use xin\payment\CloseOrderOptions;
 use xin\payment\CloseOrderResult;
 use xin\payment\OrderQueryOptions;
 use xin\payment\OrderQueryResult;
-use xin\payment\AbsPayment;
 use xin\payment\PaymentException;
 use xin\payment\PaymentOptions;
 use xin\payment\PaymentResult;
@@ -117,30 +117,7 @@ class Wechat extends AbsPayment{
 		]);
 	}
 
-	/**
-	 * 生成JS调取收银台
-	 *
-	 * @param UnifiedOrderResult $result
-	 * @throws \xin\payment\PaymentException
-	 */
-	private function buildJsParameters(UnifiedOrderResult $result){
-		if(!$result->has('appid')
-		   || !$result->has('prepay_id')
-		   || $result->get('prepay_id') == ""){
-			throw new PaymentException("订单信息错误", 511);
-		}
 
-		$info = [
-			'appId'     => isset($result["sub_appid"]) ? $result["sub_appid"] : $result["appid"],
-			'timeStamp' => time(),
-			'nonceStr'  => Util::nonceStr(),
-			'package'   => "prepay_id=".$result['prepay_id'],
-			'signType'  => "MD5",
-		];
-		$info['paySign'] = self::makeSign($info, $this->config['key']);
-
-		$result->set('__jspay_info__', $info);
-	}
 
 	/**
 	 * 查询订单
@@ -223,9 +200,9 @@ class Wechat extends AbsPayment{
 	 */
 	public function refundQuery(RefundQueryOptions $input){
 		if(!$input->hasOutRefundNo()
-		   && !$input->hasOutTradeNo()
-		   && !$input->hasTransactionId()
-		   && !$input->hasRefundId()){
+			&& !$input->hasOutTradeNo()
+			&& !$input->hasTransactionId()
+			&& !$input->hasRefundId()){
 			throw new PaymentException("退款查询接口中，out_refund_no、out_trade_no、transaction_id、refund_id四个参数必填一个！");
 		}
 
@@ -273,10 +250,10 @@ class Wechat extends AbsPayment{
 
 		//如果仅失败上报
 		if($reportLevel == 1
-		   && array_key_exists("return_code", $data)
-		   && $data["return_code"] == "SUCCESS"
-		   && array_key_exists("result_code", $data)
-		   && $data["result_code"] == "SUCCESS"){
+			&& array_key_exists("return_code", $data)
+			&& $data["return_code"] == "SUCCESS"
+			&& array_key_exists("result_code", $data)
+			&& $data["result_code"] == "SUCCESS"){
 			return;
 		}
 
@@ -382,91 +359,6 @@ class Wechat extends AbsPayment{
 		return $result;
 	}
 
-	/**
-	 * 初始化Input实例
-	 *
-	 * @param PaymentOptions $input
-	 * @return PaymentOptions
-	 */
-	protected function initOptions(PaymentOptions $input){
-		$input->set('appid', $this->config['appid']);//公众账号ID
-		$input->set('mch_id', $this->config['mch_id']);//商户号
-		$input->set('nonce_str', Util::nonceStr());//随机字符串
-		$input->remove(PayType::__NAME__);
-		$this->setSign($input);
-		return $input;
-	}
-
-	/**
-	 * 初始化Output
-	 *
-	 * @param PaymentResult $result
-	 * @return mixed
-	 * @throws PaymentException
-	 */
-	protected function initResult(PaymentResult $result){
-		if($result->get('return_code') != 'SUCCESS'){
-			throw new PaymentException($result->get('return_msg'));
-		}
-
-		if($result->get('result_code') != 'SUCCESS'){
-			throw new WechatPaymentException($result->get('err_code_des'), $result->get('err_code'));
-		}
-
-		// 检测签名
-		self::checkSign($result->toArray(), $this->config['key']);
-
-		return $result;
-	}
-
-	/**
-	 * 设置支付签名
-	 *
-	 * @param PaymentOptions $options
-	 */
-	public function setSign(PaymentOptions $options){
-		$sign = self::makeSign($options->toArray(), $this->config['key']);
-		$options->setSign($sign);
-	}
-
-	/**
-	 * 数据签名
-	 *
-	 * @param array  $data
-	 * @param string $key
-	 * @return string
-	 */
-	public static function makeSign(array $data, $key){
-		//签名步骤一：按字典序排序参数
-		ksort($data);
-		$sign = Util::buildParamsToUrl($data);
-		//签名步骤二：在string后加入KEY
-		$sign = $sign."&key=".$key;
-		//签名步骤三：MD5加密
-		$sign = md5($sign);
-		//签名步骤四：所有字符转为大写
-		$sign = strtoupper($sign);
-		return $sign;
-	}
-
-	/**
-	 * 检测签名
-	 *
-	 * @param array  $data
-	 * @param string $key
-	 * @throws \xin\payment\PaymentException
-	 */
-	public static function checkSign(array $data, $key){
-		if(!isset($data['sign'])){
-			throw new PaymentException("签名错误[sign not exist]！");
-		}
-
-		// 检测签名
-		$sign = self::makeSign($data, $key);
-		if($data['sign'] != $sign){
-			throw new PaymentException("签名错误！");
-		}
-	}
 
 	/**
 	 * 支付结果通用通知
@@ -507,9 +399,9 @@ class Wechat extends AbsPayment{
 		$proxyHost = $this->hasConfig('proxy_host');
 		$proxyPort = $this->hasConfig('proxy_port');
 		if($proxyHost
-		   && $proxyHost != "0.0.0.0"
-		   && $proxyPort
-		   && $proxyPort != 0){
+			&& $proxyHost != "0.0.0.0"
+			&& $proxyPort
+			&& $proxyPort != 0){
 			curl_setopt($ch, CURLOPT_PROXY, $proxyHost);
 			curl_setopt($ch, CURLOPT_PROXYPORT, $proxyPort);
 		}

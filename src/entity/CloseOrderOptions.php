@@ -7,20 +7,16 @@
  * @author BD<657306123@qq.com>
  */
 
-namespace xin\payment;
-
-;
+namespace xin\payment\entity;
 
 /**
- * 撤销订单
+ * 关闭订单
  * @method void setOutTradeNo($outTradeNo) 设置订单号
  * @method bool hasOutTradeNo() 是否设置订单号
- * @method void setTransactionId($transactionId) 设置交易流水号
- * @method bool hasTransactionId() 是否设置交易流水号
  *
- * @package xin\payment\data
+ * @package xin\payment\input
  */
-class ReverseOptions extends PaymentOptions{
+class CloseOrderOptions extends PaymentOptions{
 
 	/**
 	 * 获取订单号
@@ -29,15 +25,6 @@ class ReverseOptions extends PaymentOptions{
 	 */
 	public function getOutTradeNo(){
 		return $this->get(['out_trade_no']);
-	}
-
-	/**
-	 * 获取交易流水号
-	 *
-	 * @return string
-	 */
-	public function getTransactionId(){
-		return $this->get(['transaction_id']);
 	}
 
 }

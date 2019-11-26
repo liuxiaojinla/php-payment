@@ -7,7 +7,7 @@
  * @author BD<657306123@qq.com>
  */
 
-namespace xin\payment;
+namespace xin\payment\entity;
 
 /**
  * 撤销订单结果

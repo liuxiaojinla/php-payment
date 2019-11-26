@@ -7,13 +7,13 @@
  * @author BD<657306123@qq.com>
  */
 
-namespace xin\payment;
+namespace xin\payment\entity;
 
 /**
- * 订单查询结果
+ * 关闭订单结果
  *
  * @package xin\payment\output
  */
-class OrderQueryResult extends PaymentResult{
+class CloseOrderResult extends PaymentResult{
 
 }

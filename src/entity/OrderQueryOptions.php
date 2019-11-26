@@ -7,7 +7,7 @@
  * @author BD<657306123@qq.com>
  */
 
-namespace xin\payment;
+namespace xin\payment\entity;
 
 /**
  * 订单查询

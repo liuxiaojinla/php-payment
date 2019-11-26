@@ -5,7 +5,7 @@
  * @author: BD<liuxingwu@duoguan.com>
  * @date: 2019/6/22 15:45
  */
-use xin\payment\OrderQueryOptions;
+use xin\payment\entity\OrderQueryOptions;
 use xin\payment\PaymentException;
 use xin\payment\PayType;
 

@@ -6,7 +6,7 @@
  * @license http://www.apache.org/licenses/LICENSE-2.0
  * @author BD<657306123@qq.com>
  */
-namespace xin\payment\driver\engine;
+namespace xin\payment\func;
 
 use Throwable;
 use xin\payment\PaymentException;
@@ -14,9 +14,9 @@ use xin\payment\PaymentException;
 /**
  * 微信支付异常
  *
- * @package xin\payment\driver
+ * @package xin\payment\func
  */
-class WechatPaymentException extends PaymentException{
+class WxPayException extends PaymentException{
 
 	/**
 	 * 微信错误码

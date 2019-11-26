@@ -6,7 +6,11 @@
  * @license http://www.apache.org/licenses/LICENSE-2.0
  * @author BD<657306123@qq.com>
  */
-namespace xin\payment;
+namespace xin\payment\entity;
+
+use xin\payment\PaymentException;
+use xin\payment\PayType;
+use xin\payment\Util;
 
 /**
  * 支付参数基类
