@@ -21,7 +21,11 @@ use xin\payment\entity\ReverseOptions;
 use xin\payment\entity\ReverseResult;
 use xin\payment\entity\UnifiedOrderOptions;
 use xin\payment\entity\UnifiedOrderResult;
+use xin\payment\func\CloseOrder;
 use xin\payment\func\OrderQuery;
+use xin\payment\func\Refund;
+use xin\payment\func\RefundQuery;
+use xin\payment\func\Reverse;
 use xin\payment\func\UnifiedOrder;
 
 /**
@@ -43,8 +47,12 @@ class Payment implements BindFuncInterface{
 	 * @var array
 	 */
 	protected $providers = [
-		OrderQuery::class,
 		UnifiedOrder::class,
+		OrderQuery::class,
+		CloseOrder::class,
+		Refund::class,
+		RefundQuery::class,
+		Reverse::class,
 	];
 
 	/**
