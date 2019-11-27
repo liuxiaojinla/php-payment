@@ -10,9 +10,24 @@ namespace xin\payment;
 
 interface ConfigInterface{
 
-	public function getWechatAppId();
+	/**
+	 * 返回 微信支付 Appid
+	 *
+	 * @return string
+	 */
+	public function getWxPayAppId();
 
-	public function getWechatMchId();
+	/**
+	 * 返回 微信支付 mch_id
+	 *
+	 * @return string
+	 */
+	public function getWxPayMchId();
 
-	public function getWechatKey();
+	/**
+	 * 返回微信支付 支付密钥
+	 *
+	 * @return string
+	 */
+	public function getWxPayKey();
 }

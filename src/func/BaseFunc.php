@@ -10,7 +10,7 @@ namespace xin\payment\func;
 
 use xin\payment\BindFuncInterface;
 use xin\payment\ConfigInterface;
-use xin\payment\entity\PaymentOptions;
+use xin\payment\entity\PaymentInput;
 use xin\payment\PaymentException;
 use xin\payment\PayType;
 use xin\payment\ProviderInterface;
@@ -41,7 +41,7 @@ abstract class BaseFunc implements ProviderInterface{
 		$classname = basename($classname);
 		$classname = lcfirst($classname);
 
-		$func->bind($classname, function(ConfigInterface $config, PaymentOptions $input){
+		$func->bind($classname, function(ConfigInterface $config, PaymentInput $input){
 			if(PayType::ALIPAY == $input->getPayType()){
 				return $this->onAlipay($config, $input);
 			}else{
@@ -55,18 +55,18 @@ abstract class BaseFunc implements ProviderInterface{
 	/**
 	 * 支付宝
 	 *
-	 * @param \xin\payment\ConfigInterface       $config
-	 * @param \xin\payment\entity\PaymentOptions $input
+	 * @param \xin\payment\ConfigInterface     $config
+	 * @param \xin\payment\entity\PaymentInput $input
 	 * @return mixed
 	 */
-	abstract protected function onAliPay(ConfigInterface $config, PaymentOptions $input);
+	abstract protected function onAliPay(ConfigInterface $config, PaymentInput $input);
 
 	/**
 	 * 微信
 	 *
-	 * @param \xin\payment\ConfigInterface       $config
-	 * @param \xin\payment\entity\PaymentOptions $input
+	 * @param \xin\payment\ConfigInterface     $config
+	 * @param \xin\payment\entity\PaymentInput $input
 	 * @return mixed
 	 */
-	abstract protected function onWxPay(ConfigInterface $config, PaymentOptions $input);
+	abstract protected function onWxPay(ConfigInterface $config, PaymentInput $input);
 }

@@ -9,8 +9,8 @@
 namespace xin\payment\func;
 
 use xin\payment\ConfigInterface;
-use xin\payment\entity\PaymentOptions;
-use xin\payment\entity\PaymentResult;
+use xin\payment\entity\PaymentInput;
+use xin\payment\entity\PaymentOutput;
 use xin\payment\PaymentException;
 use xin\payment\PayType;
 use xin\payment\Util;
@@ -103,16 +103,23 @@ class WxPayUtil{
 	 *
 	 * @param array  $data
 	 * @param string $key
+	 * @param int    $encryptType
 	 * @return string
 	 */
-	public static function makeSign(array $data, $key){
+	public static function makeSign(array $data, $key, $encryptType = 0){
 		//签名步骤一：按字典序排序参数
 		ksort($data);
 		$sign = Util::buildParamsToUrl($data);
 		//签名步骤二：在string后加入KEY
 		$sign = $sign."&key=".$key;
-		//签名步骤三：MD5加密
-		$sign = md5($sign);
+
+		//签名步骤三：MD5加密或者HMAC-SHA256
+		if($encryptType == 0){
+			$sign = md5($sign);
+		}else{
+			$string = hash_hmac("sha256", $sign, $key);
+		}
+
 		//签名步骤四：所有字符转为大写
 		$sign = strtoupper($sign);
 		return $sign;
@@ -130,8 +137,10 @@ class WxPayUtil{
 			throw new PaymentException("签名错误[sign not exist]！");
 		}
 
-		// 检测签名
-		$sign = self::makeSign($data, $key);
+		// 计算签名加密类型，如果签名小于等于32个,则使用md5验证，否则是用sha256校验
+		$encryptType = strlen($data['sign']) <= 32 ? 0 : 1;
+		$sign = self::makeSign($data, $key, $encryptType);
+
 		if($data['sign'] != $sign){
 			throw new PaymentException("签名错误！");
 		}
@@ -140,13 +149,13 @@ class WxPayUtil{
 	/**
 	 * 初始化 请求参数
 	 *
-	 * @param \xin\payment\ConfigInterface       $config
-	 * @param \xin\payment\entity\PaymentOptions $input
+	 * @param \xin\payment\ConfigInterface     $config
+	 * @param \xin\payment\entity\PaymentInput $input
 	 * @throws \xin\payment\PaymentException
 	 */
-	public static function initWxPayInput(ConfigInterface $config, PaymentOptions $input){
+	public static function initWxPayInput(ConfigInterface $config, PaymentInput $input){
 		$data = [
-			'appid'  => $config->getWechatAppId(),
+			'appid'  => $config->getWxPayAppId(),
 			'mch_id' => $config->getWechatMchId(),
 			'key'    => $config->getWechatKey(),
 		];
@@ -176,15 +185,15 @@ class WxPayUtil{
 	/**
 	 * 初始化 请求结果
 	 *
-	 * @param                              $response
-	 * @param                              $class
-	 * @param \xin\payment\ConfigInterface $config
+	 * @param string          $response
+	 * @param string          $class
+	 * @param ConfigInterface $config
 	 * @return mixed
 	 * @throws \xin\payment\PaymentException
 	 * @throws \xin\payment\func\WxPayException
 	 */
-	public static function makeResult($response, $class, ConfigInterface $config){
-		/**@var $class PaymentResult::class */
+	public static function makeOutput($response, $class, ConfigInterface $config){
+		/**@var $class PaymentOutput::class */
 		$result = $class::fromXML($response, $config);
 
 		if($result->get('return_code') != 'SUCCESS'){

@@ -10,10 +10,9 @@
 namespace xin\payment\entity;
 
 /**
- * 撤销订单结果
+ * 退款查询
  *
  * @package xin\payment\data
  */
-class ReverseResult extends PaymentResult{
-
+class RefundQueryOutput extends PaymentOutput{
 }

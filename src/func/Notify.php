@@ -10,6 +10,7 @@ namespace xin\payment\func;
 
 use xin\payment\BindFuncInterface;
 use xin\payment\ConfigInterface;
+use xin\payment\entity\PaymentOutput;
 use xin\payment\PaymentException;
 use xin\payment\ProviderInterface;
 
@@ -36,7 +37,7 @@ class Notify implements ProviderInterface{
 		$xml = file_get_contents('php://input');
 		//如果返回成功则验证签名
 		try{
-			$result = PaymentResult::fromXML($xml);
+			$result = PaymentOutput::fromXML($xml);
 			return $result;
 		}catch(PaymentException $e){
 			$msg = $e->getMessage();

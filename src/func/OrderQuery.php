@@ -9,7 +9,10 @@
 namespace xin\payment\func;
 
 use xin\payment\ConfigInterface;
-use xin\payment\entity\PaymentOptions;
+use xin\payment\entity\CloseOrderOutput;
+use xin\payment\entity\OrderQueryInput;
+use xin\payment\entity\OrderQueryOutput;
+use xin\payment\entity\PaymentInput;
 use xin\payment\PaymentException;
 
 /**
@@ -22,30 +25,31 @@ class OrderQuery extends BaseFunc{
 	/**
 	 * 支付宝
 	 *
-	 * @param \xin\payment\ConfigInterface       $config
-	 * @param \xin\payment\entity\PaymentOptions $options
+	 * @param \xin\payment\ConfigInterface     $config
+	 * @param \xin\payment\entity\PaymentInput $options
 	 * @return mixed
 	 */
-	protected function onAliPay(ConfigInterface $config, PaymentOptions $options){
+	protected function onAliPay(ConfigInterface $config, PaymentInput $options){
 		// TODO: Implement onAlipay() method.
 	}
 
 	/**
 	 * 微信
 	 *
-	 * @param \xin\payment\ConfigInterface       $config
-	 * @param \xin\payment\entity\PaymentOptions $input
+	 * @param \xin\payment\ConfigInterface     $config
+	 * @param \xin\payment\entity\PaymentInput $input
 	 * @return mixed
 	 * @throws \xin\payment\PaymentException
 	 */
-	protected function onWxPay(ConfigInterface $config, PaymentOptions $input){
+	protected function onWxPay(ConfigInterface $config, PaymentInput $input){
 		if(!$input->hasOutTradeNo() && !$input->hasTransactionId()){
 			throw new PaymentException("订单查询接口中，out_trade_no、transaction_id至少填一个！");
 		}
 
 		$url = "https://api.mch.weixin.qq.com/pay/orderquery";
-		$result = $this->result($url, $input, OrderQueryResult::class, false, 6);
-		return $result->transformKeys([
-		]);
+		$response = WxPayUtil::request($url, $input->toXml());
+		$result = WxPayUtil::makeOutput($response, OrderQueryOutput::class, $config);
+
+		return $result->transformKeys([]);
 	}
 }

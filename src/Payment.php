@@ -9,18 +9,18 @@
 
 namespace xin\payment;
 
-use xin\payment\entity\CloseOrderOptions;
-use xin\payment\entity\CloseOrderResult;
-use xin\payment\entity\OrderQueryOptions;
-use xin\payment\entity\OrderQueryResult;
-use xin\payment\entity\RefundOptions;
-use xin\payment\entity\RefundQueryOptions;
-use xin\payment\entity\RefundQueryResult;
-use xin\payment\entity\RefundResult;
-use xin\payment\entity\ReverseOptions;
-use xin\payment\entity\ReverseResult;
-use xin\payment\entity\UnifiedOrderOptions;
-use xin\payment\entity\UnifiedOrderResult;
+use xin\payment\entity\CloseOrderInput;
+use xin\payment\entity\CloseOrderOutput;
+use xin\payment\entity\OrderQueryInput;
+use xin\payment\entity\OrderQueryOutput;
+use xin\payment\entity\RefundInput;
+use xin\payment\entity\RefundQueryInput;
+use xin\payment\entity\RefundQueryOutput;
+use xin\payment\entity\RefundOutput;
+use xin\payment\entity\ReverseInput;
+use xin\payment\entity\ReverseOutput;
+use xin\payment\entity\UnifiedOrderInput;
+use xin\payment\entity\UnifiedOrderOutput;
 use xin\payment\func\CloseOrder;
 use xin\payment\func\OrderQuery;
 use xin\payment\func\Refund;
@@ -30,12 +30,12 @@ use xin\payment\func\UnifiedOrder;
 
 /**
  * 统一支付
- * @method UnifiedOrderResult unifiedOrder(UnifiedOrderOptions $input) 统一下单
- * @method OrderQueryResult orderQuery(OrderQueryOptions $input) 查询订单
- * @method CloseOrderResult closeOrder(CloseOrderOptions $input) 关闭订单
- * @method RefundResult refund(RefundOptions $input) 申请退款
- * @method RefundQueryResult refundQuery(RefundQueryOptions $input) 退款查询
- * @method ReverseResult reverse(ReverseOptions $input) 撤销订单
+ * @method UnifiedOrderOutput unifiedOrder(UnifiedOrderInput $input) 统一下单
+ * @method OrderQueryOutput orderQuery(OrderQueryInput $input) 查询订单
+ * @method CloseOrderOutput closeOrder(CloseOrderInput $input) 关闭订单
+ * @method RefundOutput refund(RefundInput $input) 申请退款
+ * @method RefundQueryOutput refundQuery(RefundQueryInput $input) 退款查询
+ * @method ReverseOutput reverse(ReverseInput $input) 撤销订单
  *
  * @package xin\payment
  */

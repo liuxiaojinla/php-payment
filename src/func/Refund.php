@@ -9,7 +9,9 @@
 namespace xin\payment\func;
 
 use xin\payment\ConfigInterface;
-use xin\payment\entity\PaymentOptions;
+use xin\payment\entity\OrderQueryOutput;
+use xin\payment\entity\PaymentInput;
+use xin\payment\entity\RefundOutput;
 use xin\payment\PaymentException;
 
 /**
@@ -25,23 +27,23 @@ class Refund extends BaseFunc{
 	/**
 	 * 支付宝
 	 *
-	 * @param \xin\payment\ConfigInterface       $config
-	 * @param \xin\payment\entity\PaymentOptions $input
+	 * @param \xin\payment\ConfigInterface     $config
+	 * @param \xin\payment\entity\PaymentInput $input
 	 * @return mixed
 	 */
-	protected function onAliPay(ConfigInterface $config, PaymentOptions $input){
+	protected function onAliPay(ConfigInterface $config, PaymentInput $input){
 		// TODO: Implement onAliPay() method.
 	}
 
 	/**
 	 * 微信
 	 *
-	 * @param \xin\payment\ConfigInterface       $config
-	 * @param \xin\payment\entity\PaymentOptions $input
+	 * @param \xin\payment\ConfigInterface     $config
+	 * @param \xin\payment\entity\PaymentInput $input
 	 * @return mixed
 	 * @throws \xin\payment\PaymentException
 	 */
-	protected function onWxPay(ConfigInterface $config, PaymentOptions $input){
+	protected function onWxPay(ConfigInterface $config, PaymentInput $input){
 		if(!$input->hasOutTradeNo() && !$input->hasTransactionId()){
 			throw new PaymentException("退款申请接口中，out_trade_no、transaction_id至少填一个！");
 		}elseif(!$input->hasOutRefundNo()){
@@ -55,9 +57,9 @@ class Refund extends BaseFunc{
 		}
 
 		$url = "https://api.mch.weixin.qq.com/secapi/pay/refund";
-		$result = $this->result($url, $input, RefundResult::class, false, 6);
-		return $result->transformKeys([
+		$response = WxPayUtil::request($url, $input->toXml());
+		$result = WxPayUtil::makeOutput($response, RefundOutput::class, $config);
 
-		]);
+		return $result->transformKeys([]);
 	}
 }

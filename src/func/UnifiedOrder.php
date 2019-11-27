@@ -9,8 +9,8 @@
 namespace xin\payment\func;
 
 use xin\payment\ConfigInterface;
-use xin\payment\entity\PaymentOptions;
-use xin\payment\entity\UnifiedOrderResult;
+use xin\payment\entity\PaymentInput;
+use xin\payment\entity\UnifiedOrderOutput;
 use xin\payment\PaymentException;
 use xin\payment\TradeType;
 use xin\payment\Util;
@@ -20,23 +20,23 @@ class UnifiedOrder extends BaseFunc{
 	/**
 	 * 支付宝
 	 *
-	 * @param \xin\payment\ConfigInterface       $config
-	 * @param \xin\payment\entity\PaymentOptions $options
+	 * @param \xin\payment\ConfigInterface     $config
+	 * @param \xin\payment\entity\PaymentInput $options
 	 * @return mixed
 	 */
-	protected function onAliPay(ConfigInterface $config, PaymentOptions $options){
+	protected function onAliPay(ConfigInterface $config, PaymentInput $options){
 		// TODO: Implement onAlipay() method.
 	}
 
 	/**
 	 * 微信
 	 *
-	 * @param \xin\payment\ConfigInterface       $config
-	 * @param \xin\payment\entity\PaymentOptions $input
+	 * @param \xin\payment\ConfigInterface     $config
+	 * @param \xin\payment\entity\PaymentInput $input
 	 * @return mixed
 	 * @throws \xin\payment\PaymentException
 	 */
-	protected function onWxPay(ConfigInterface $config, PaymentOptions $input){
+	protected function onWxPay(ConfigInterface $config, PaymentInput $input){
 		if($input->getTradeType() == "JSAPI"){
 			if($input->has('sub_appid') && !$input->has('sub_openid')){
 				throw new PaymentException("统一支付接口中，缺少必填参数sub_openid！sub_appid不为空时，sub_openid为必填参数！");
@@ -76,7 +76,7 @@ class UnifiedOrder extends BaseFunc{
 		// 发起请求
 		$url = "https://api.mch.weixin.qq.com/pay/unifiedorder";
 		$response = WxPayUtil::request($url, $input->toXml());
-		$result = WxPayUtil::makeResult($response, UnifiedOrderResult::class, $config);
+		$result = WxPayUtil::makeOutput($response, UnifiedOrderOutput::class, $config);
 
 		// 公众号、服务号、小程序支付
 		if($input->get('trade_type') == 'JSAPI'){
@@ -89,11 +89,11 @@ class UnifiedOrder extends BaseFunc{
 	/**
 	 * 生成JS调取收银台
 	 *
-	 * @param UnifiedOrderResult           $result
+	 * @param UnifiedOrderOutput           $result
 	 * @param \xin\payment\ConfigInterface $config
 	 * @throws \xin\payment\func\WxPayException
 	 */
-	private function buildWxPayJsParameters(UnifiedOrderResult $result, ConfigInterface $config){
+	private function buildWxPayJsParameters(UnifiedOrderOutput $result, ConfigInterface $config){
 		if(!$result->has('appid')
 			|| !$result->has('prepay_id')
 			|| $result->get('prepay_id') == ""){

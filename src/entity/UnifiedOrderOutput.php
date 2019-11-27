@@ -14,7 +14,7 @@ namespace xin\payment\entity;
  *
  * @package xin\payment\data
  */
-class UnifiedOrderResult extends PaymentResult{
+class UnifiedOrderOutput extends PaymentOutput{
 
 	/**
 	 * 获取JS支付信息

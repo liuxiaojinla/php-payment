@@ -18,7 +18,7 @@ use xin\payment\PaymentException;
  * @property \xin\payment\ConfigInterface config
  * @package xin\payment\data
  */
-class PaymentResult extends PaymentData{
+class PaymentOutput extends PaymentData{
 
 	/**
 	 * PaymentResult constructor.

@@ -9,7 +9,8 @@
 namespace xin\payment\func;
 
 use xin\payment\ConfigInterface;
-use xin\payment\entity\PaymentOptions;
+use xin\payment\entity\PaymentInput;
+use xin\payment\entity\RefundQueryOutput;
 use xin\payment\PaymentException;
 
 /**
@@ -26,23 +27,23 @@ class RefundQuery extends BaseFunc{
 	/**
 	 * 支付宝
 	 *
-	 * @param \xin\payment\ConfigInterface       $config
-	 * @param \xin\payment\entity\PaymentOptions $input
+	 * @param \xin\payment\ConfigInterface     $config
+	 * @param \xin\payment\entity\PaymentInput $input
 	 * @return mixed
 	 */
-	protected function onAliPay(ConfigInterface $config, PaymentOptions $input){
+	protected function onAliPay(ConfigInterface $config, PaymentInput $input){
 		// TODO: Implement onAliPay() method.
 	}
 
 	/**
 	 * 微信
 	 *
-	 * @param \xin\payment\ConfigInterface       $config
-	 * @param \xin\payment\entity\PaymentOptions $input
+	 * @param \xin\payment\ConfigInterface     $config
+	 * @param \xin\payment\entity\PaymentInput $input
 	 * @return mixed
 	 * @throws \xin\payment\PaymentException
 	 */
-	protected function onWxPay(ConfigInterface $config, PaymentOptions $input){
+	protected function onWxPay(ConfigInterface $config, PaymentInput $input){
 		if(!$input->hasOutRefundNo()
 			&& !$input->hasOutTradeNo()
 			&& !$input->hasTransactionId()
@@ -51,9 +52,9 @@ class RefundQuery extends BaseFunc{
 		}
 
 		$url = "https://api.mch.weixin.qq.com/pay/refundquery";
-		$result = $this->result($url, $input, RefundQueryResult::class, false, 6);
-		return $result->transformKeys([
+		$response = WxPayUtil::request($url, $input->toXml());
+		$result = WxPayUtil::makeOutput($response, RefundQueryOutput::class, $config);
 
-		]);
+		return $result->transformKeys([]);
 	}
 }

@@ -10,13 +10,15 @@
 namespace xin\payment\entity;
 
 /**
- * 关闭订单
+ * 订单查询
  * @method void setOutTradeNo($outTradeNo) 设置订单号
  * @method bool hasOutTradeNo() 是否设置订单号
+ * @method void setTransactionId($transactionId) 设置交易流水号
+ * @method bool hasTransactionId() 是否设置交易流水号
  *
- * @package xin\payment\input
+ * @package xin\payment\data
  */
-class CloseOrderOptions extends PaymentOptions{
+class OrderQueryInput extends PaymentInput{
 
 	/**
 	 * 获取订单号
@@ -25,6 +27,15 @@ class CloseOrderOptions extends PaymentOptions{
 	 */
 	public function getOutTradeNo(){
 		return $this->get(['out_trade_no']);
+	}
+
+	/**
+	 * 获取交易流水号
+	 *
+	 * @return string
+	 */
+	public function getTransactionId(){
+		return $this->get(['transaction_id']);
 	}
 
 }

@@ -26,7 +26,7 @@ namespace xin\payment\entity;
  *
  * @package xin\payment\data
  */
-class RefundOptions extends PaymentOptions{
+class RefundInput extends PaymentInput{
 
 	/**
 	 * 获取订单号

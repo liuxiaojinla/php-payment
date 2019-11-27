@@ -17,7 +17,7 @@ use xin\payment\Util;
  *
  * @package xin\payment
  */
-class PaymentData implements \ArrayAccess, \IteratorAggregate, \JsonSerializable{
+abstract class PaymentData implements \ArrayAccess, \IteratorAggregate, \JsonSerializable{
 
 	/**
 	 * @var array

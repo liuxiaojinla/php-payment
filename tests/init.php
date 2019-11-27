@@ -19,16 +19,26 @@ function get_payment(){
 	//	]
 	return new Payment(new class implements ConfigInterface{
 
-		public function getWechatAppId(){
+		public function getWxPayAppId(){
 			return "";
 		}
 
-		public function getWechatMchId(){
-			return "";
+		/**
+		 * 返回 微信支付 mch_id
+		 *
+		 * @return string
+		 */
+		public function getWxPayMchId(){
+			// TODO: Implement getWxPayMchId() method.
 		}
 
-		public function getWechatKey(){
-			return "";
+		/**
+		 * 返回微信支付 支付密钥
+		 *
+		 * @return string
+		 */
+		public function getWxPayKey(){
+			// TODO: Implement getWxPayKey() method.
 		}
 	});
 }

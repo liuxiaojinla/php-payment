@@ -9,7 +9,8 @@
 namespace xin\payment\func;
 
 use xin\payment\ConfigInterface;
-use xin\payment\entity\PaymentOptions;
+use xin\payment\entity\PaymentInput;
+use xin\payment\entity\ReverseOutput;
 use xin\payment\PaymentException;
 
 /**
@@ -24,31 +25,31 @@ class Reverse extends BaseFunc{
 	/**
 	 * 支付宝
 	 *
-	 * @param \xin\payment\ConfigInterface       $config
-	 * @param \xin\payment\entity\PaymentOptions $input
+	 * @param \xin\payment\ConfigInterface     $config
+	 * @param \xin\payment\entity\PaymentInput $input
 	 * @return mixed
 	 */
-	protected function onAliPay(ConfigInterface $config, PaymentOptions $input){
+	protected function onAliPay(ConfigInterface $config, PaymentInput $input){
 		// TODO: Implement onAliPay() method.
 	}
 
 	/**
 	 * 微信
 	 *
-	 * @param \xin\payment\ConfigInterface       $config
-	 * @param \xin\payment\entity\PaymentOptions $input
+	 * @param \xin\payment\ConfigInterface     $config
+	 * @param \xin\payment\entity\PaymentInput $input
 	 * @return mixed
 	 * @throws \xin\payment\PaymentException
 	 */
-	protected function onWxPay(ConfigInterface $config, PaymentOptions $input){
+	protected function onWxPay(ConfigInterface $config, PaymentInput $input){
 		if(!$input->hasOutTradeNo() && !$input->hasTransactionId()){
 			throw new PaymentException("撤销订单API接口中，参数out_trade_no和transaction_id必须填写一个！");
 		}
 
 		$url = "https://api.mch.weixin.qq.com/secapi/pay/reverse";
-		$result = $this->result($url, $input, ReverseResult::class, false, 6);
-		return $result->transformKeys([
+		$response = WxPayUtil::request($url, $input->toXml());
+		$result = WxPayUtil::makeOutput($response, ReverseOutput::class, $config);
 
-		]);
+		return $result->transformKeys([]);
 	}
 }

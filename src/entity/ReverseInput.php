@@ -10,7 +10,7 @@
 namespace xin\payment\entity;
 
 /**
- * 订单查询
+ * 撤销订单
  * @method void setOutTradeNo($outTradeNo) 设置订单号
  * @method bool hasOutTradeNo() 是否设置订单号
  * @method void setTransactionId($transactionId) 设置交易流水号
@@ -18,7 +18,7 @@ namespace xin\payment\entity;
  *
  * @package xin\payment\data
  */
-class OrderQueryOptions extends PaymentOptions{
+class ReverseInput extends PaymentInput{
 
 	/**
 	 * 获取订单号

@@ -14,6 +14,6 @@ namespace xin\payment\entity;
  *
  * @package xin\payment\output
  */
-class OrderQueryResult extends PaymentResult{
+class OrderQueryOutput extends PaymentOutput{
 
 }

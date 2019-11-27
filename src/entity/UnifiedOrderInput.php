@@ -56,7 +56,7 @@ namespace xin\payment\entity;
  *
  * @package xin\payment\data
  */
-class UnifiedOrderOptions extends PaymentOptions{
+class UnifiedOrderInput extends PaymentInput{
 
 	/**
 	 * 获取交易类型

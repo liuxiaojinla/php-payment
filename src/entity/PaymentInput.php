@@ -14,7 +14,7 @@ namespace xin\payment\entity;
  *
  * @package xin\payment\data
  */
-class PaymentOptions extends PaymentData{
+class PaymentInput extends PaymentData{
 
 	/**
 	 * 设置数据签名
