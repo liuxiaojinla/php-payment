@@ -30,4 +30,11 @@ interface ConfigInterface{
 	 * @return string
 	 */
 	public function getWxPayKey();
+
+	/**
+	 * 返回微信支付 安全证书
+	 *
+	 * @return array
+	 */
+	public function getWxPaySslCertPath();
 }

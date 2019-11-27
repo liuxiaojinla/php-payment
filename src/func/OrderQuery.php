@@ -9,8 +9,6 @@
 namespace xin\payment\func;
 
 use xin\payment\ConfigInterface;
-use xin\payment\entity\CloseOrderOutput;
-use xin\payment\entity\OrderQueryInput;
 use xin\payment\entity\OrderQueryOutput;
 use xin\payment\entity\PaymentInput;
 use xin\payment\PaymentException;
@@ -45,6 +43,9 @@ class OrderQuery extends BaseFunc{
 		if(!$input->hasOutTradeNo() && !$input->hasTransactionId()){
 			throw new PaymentException("订单查询接口中，out_trade_no、transaction_id至少填一个！");
 		}
+
+		// 初始化input
+		WxPayUtil::initWxPayInput($config, $input);
 
 		$url = "https://api.mch.weixin.qq.com/pay/orderquery";
 		$response = WxPayUtil::request($url, $input->toXml());

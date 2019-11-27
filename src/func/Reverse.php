@@ -46,6 +46,9 @@ class Reverse extends BaseFunc{
 			throw new PaymentException("撤销订单API接口中，参数out_trade_no和transaction_id必须填写一个！");
 		}
 
+		// 初始化input
+		WxPayUtil::initWxPayInput($config, $input);
+
 		$url = "https://api.mch.weixin.qq.com/secapi/pay/reverse";
 		$response = WxPayUtil::request($url, $input->toXml());
 		$result = WxPayUtil::makeOutput($response, ReverseOutput::class, $config);

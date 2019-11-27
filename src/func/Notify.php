@@ -11,7 +11,6 @@ namespace xin\payment\func;
 use xin\payment\BindFuncInterface;
 use xin\payment\ConfigInterface;
 use xin\payment\entity\PaymentOutput;
-use xin\payment\PaymentException;
 use xin\payment\ProviderInterface;
 
 class Notify implements ProviderInterface{
@@ -30,18 +29,21 @@ class Notify implements ProviderInterface{
 	 * 支付结果通用通知
 	 *
 	 * @param string $msg
-	 * @return bool|PaymentResult
+	 * @return PaymentOutput
 	 */
-	public static function notify(&$msg){
+	public function onWxPay(&$msg){
 		//获取通知的数据
 		$xml = file_get_contents('php://input');
+
 		//如果返回成功则验证签名
 		try{
-			$result = PaymentOutput::fromXML($xml);
+			$result = PaymentOutput::fromXML($xml, null);
+
 			return $result;
-		}catch(PaymentException $e){
-			$msg = $e->getMessage();
-			return false;
+		}catch(\Exception $e){
+			$msg = $e;
 		}
+
+		return null;
 	}
 }

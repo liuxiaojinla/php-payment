@@ -11,10 +11,8 @@ namespace xin\payment\func;
 use xin\payment\BindFuncInterface;
 use xin\payment\ConfigInterface;
 use xin\payment\entity\PaymentInput;
-use xin\payment\PaymentException;
 use xin\payment\PayType;
 use xin\payment\ProviderInterface;
-use xin\payment\Util;
 
 /**
  * Class BaseFunc
@@ -49,8 +47,6 @@ abstract class BaseFunc implements ProviderInterface{
 			}
 		});
 	}
-
-
 
 	/**
 	 * 支付宝

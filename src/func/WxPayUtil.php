@@ -44,7 +44,7 @@ class WxPayUtil{
 		$ua = "WXPaySDK/".self::$VERSION." (".PHP_OS.") PHP/".PHP_VERSION." CURL/".$curlVersion['version'];
 
 		//设置超时
-		$timeout = isset($options['timeout']) ? $options['timeout'] : 0;
+		$timeout = isset($options['timeout']) ? $options['timeout'] : 6;
 		if($timeout){
 			curl_setopt($ch, CURLOPT_TIMEOUT, $options['timeout']);
 		}
@@ -99,54 +99,6 @@ class WxPayUtil{
 	}
 
 	/**
-	 * 数据签名
-	 *
-	 * @param array  $data
-	 * @param string $key
-	 * @param int    $encryptType
-	 * @return string
-	 */
-	public static function makeSign(array $data, $key, $encryptType = 0){
-		//签名步骤一：按字典序排序参数
-		ksort($data);
-		$sign = Util::buildParamsToUrl($data);
-		//签名步骤二：在string后加入KEY
-		$sign = $sign."&key=".$key;
-
-		//签名步骤三：MD5加密或者HMAC-SHA256
-		if($encryptType == 0){
-			$sign = md5($sign);
-		}else{
-			$string = hash_hmac("sha256", $sign, $key);
-		}
-
-		//签名步骤四：所有字符转为大写
-		$sign = strtoupper($sign);
-		return $sign;
-	}
-
-	/**
-	 * 检测签名
-	 *
-	 * @param array  $data
-	 * @param string $key
-	 * @throws \xin\payment\PaymentException
-	 */
-	public static function checkSign(array $data, $key){
-		if(!isset($data['sign'])){
-			throw new PaymentException("签名错误[sign not exist]！");
-		}
-
-		// 计算签名加密类型，如果签名小于等于32个,则使用md5验证，否则是用sha256校验
-		$encryptType = strlen($data['sign']) <= 32 ? 0 : 1;
-		$sign = self::makeSign($data, $key, $encryptType);
-
-		if($data['sign'] != $sign){
-			throw new PaymentException("签名错误！");
-		}
-	}
-
-	/**
 	 * 初始化 请求参数
 	 *
 	 * @param \xin\payment\ConfigInterface     $config
@@ -156,8 +108,8 @@ class WxPayUtil{
 	public static function initWxPayInput(ConfigInterface $config, PaymentInput $input){
 		$data = [
 			'appid'  => $config->getWxPayAppId(),
-			'mch_id' => $config->getWechatMchId(),
-			'key'    => $config->getWechatKey(),
+			'mch_id' => $config->getWxPayMchId(),
+			'key'    => $config->getWxPayKey(),
 		];
 
 		// app_id 必填
@@ -205,8 +157,56 @@ class WxPayUtil{
 		}
 
 		// 检测签名
-		self::checkSign($result->toArray(), $config->getWechatKey());
+		self::checkSign($result->toArray(), $config->getWxPayKey());
 
 		return $result;
+	}
+
+	/**
+	 * 检测签名
+	 *
+	 * @param array  $data
+	 * @param string $key
+	 * @throws \xin\payment\PaymentException
+	 */
+	public static function checkSign(array $data, $key){
+		if(!isset($data['sign'])){
+			throw new PaymentException("签名错误[sign not exist]！");
+		}
+
+		// 计算签名加密类型，如果签名小于等于32个,则使用md5验证，否则是用sha256校验
+		$encryptType = strlen($data['sign']) <= 32 ? 0 : 1;
+		$sign = self::makeSign($data, $key, $encryptType);
+
+		if($data['sign'] != $sign){
+			throw new PaymentException("签名错误！");
+		}
+	}
+
+	/**
+	 * 数据签名
+	 *
+	 * @param array  $data
+	 * @param string $key
+	 * @param int    $encryptType
+	 * @return string
+	 */
+	public static function makeSign(array $data, $key, $encryptType = 0){
+		//签名步骤一：按字典序排序参数
+		ksort($data);
+		$sign = Util::buildParamsToUrl($data);
+		//签名步骤二：在string后加入KEY
+		$sign = $sign."&key=".$key;
+
+		//签名步骤三：MD5加密或者HMAC-SHA256
+		if($encryptType == 0){
+			$sign = md5($sign);
+		}else{
+			$sign = hash_hmac("sha256", $sign, $key);
+		}
+
+		//签名步骤四：所有字符转为大写
+		$sign = strtoupper($sign);
+		return $sign;
 	}
 }

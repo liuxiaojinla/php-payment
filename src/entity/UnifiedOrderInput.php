@@ -9,6 +9,8 @@
 
 namespace xin\payment\entity;
 
+use xin\payment\TradeType;
+
 /**
  * 统一下单参数
  * @method string getOutTradeNo() 获取订单号

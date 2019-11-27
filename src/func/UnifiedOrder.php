@@ -51,6 +51,9 @@ class UnifiedOrder extends BaseFunc{
 			throw new PaymentException("统一支付接口中，缺少必填参数product_id！trade_type为NATIVE时，product_id为必填参数！");
 		}
 
+		// 初始化input
+		WxPayUtil::initWxPayInput($config, $input);
+
 		// 转换keys
 		$input = $input->transformKeys([
 			'start_time'        => 'time_start',
@@ -70,7 +73,7 @@ class UnifiedOrder extends BaseFunc{
 		$input->set('spbill_create_ip', isset($_SERVER['REMOTE_ADDR']) ? $_SERVER['REMOTE_ADDR'] : '');
 
 		// 设置支付签名
-		$sign = WxPayUtil::makeSign($input->toArray(), $config->getWechatKey());
+		$sign = WxPayUtil::makeSign($input->toArray(), $config->getWxPayKey());
 		$input->setSign($sign);
 
 		// 发起请求
@@ -107,7 +110,7 @@ class UnifiedOrder extends BaseFunc{
 			'package'   => "prepay_id=".$result['prepay_id'],
 			'signType'  => "MD5",
 		];
-		$info['paySign'] = WxPayUtil::makeSign($info, $config->getWechatKey());
+		$info['paySign'] = WxPayUtil::makeSign($info, $config->getWxPayKey());
 
 		$result->set('__jspay_info__', $info);
 	}

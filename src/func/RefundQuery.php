@@ -51,6 +51,9 @@ class RefundQuery extends BaseFunc{
 			throw new PaymentException("退款查询接口中，out_refund_no、out_trade_no、transaction_id、refund_id四个参数必填一个！");
 		}
 
+		// 初始化input
+		WxPayUtil::initWxPayInput($config, $input);
+
 		$url = "https://api.mch.weixin.qq.com/pay/refundquery";
 		$response = WxPayUtil::request($url, $input->toXml());
 		$result = WxPayUtil::makeOutput($response, RefundQueryOutput::class, $config);

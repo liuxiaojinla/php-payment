@@ -9,7 +9,6 @@
 namespace xin\payment\func;
 
 use xin\payment\ConfigInterface;
-use xin\payment\entity\OrderQueryOutput;
 use xin\payment\entity\PaymentInput;
 use xin\payment\entity\RefundOutput;
 use xin\payment\PaymentException;
@@ -56,8 +55,17 @@ class Refund extends BaseFunc{
 			throw new PaymentException("退款申请接口中，缺少必填参数op_user_id！");
 		}
 
+		// 初始化input
+		WxPayUtil::initWxPayInput($config, $input);
+
+		list($certPath, $certKeyPath) = $config->getWxPaySslCertPath();
+		$requestOptions = [
+			'ssl_cert_path' => $certPath,
+			'ssl_cert_key'  => $certKeyPath,
+		];
+
 		$url = "https://api.mch.weixin.qq.com/secapi/pay/refund";
-		$response = WxPayUtil::request($url, $input->toXml());
+		$response = WxPayUtil::request($url, $input->toXml(), $requestOptions);
 		$result = WxPayUtil::makeOutput($response, RefundOutput::class, $config);
 
 		return $result->transformKeys([]);
