@@ -17,13 +17,11 @@ $orderSn = time();
 var_dump($orderSn);
 
 $input = new UnifiedOrderInput();
-$input->setSubAppid('wx12345678910');
-$input->setSubOpenid('o9F2bs2V9FUlaoeggfIo94YRWVS4');
 $input->setOutTradeNo($orderSn);
 $input->setBody('测试支付');
 $input->setTotalFee(100);
 $input->setNotifyUrl('https://www.baidu.com');
-$input->setOpenid('o9F2bs2V9FUlaoeggfIo94YRWVS4');
+$input->setOpenid('o49390NOh_fmsdpZCEgoWbC_8nws');
 $input->setPayType(PayType::WECHAT);
 $input->setTradeType(TradeType::JSAPI);
 
@@ -31,6 +29,7 @@ try{
 	$payment = get_payment();
 	$result = $payment->unifiedOrder($input);
 	var_dump($result);
+	var_dump($result->getJsPayInfo());
 }catch(PaymentException $e){
 	var_dump("error:".$e->getMessage());
 }

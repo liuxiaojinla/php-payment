@@ -11,9 +11,13 @@ namespace xin\payment;
 
 use xin\payment\func\CloseOrder;
 use xin\payment\func\OrderQuery;
+use xin\payment\func\PayBank;
+use xin\payment\func\PayBankQuery;
 use xin\payment\func\Refund;
 use xin\payment\func\RefundQuery;
 use xin\payment\func\Reverse;
+use xin\payment\func\Transfers;
+use xin\payment\func\TransfersQuery;
 use xin\payment\func\UnifiedOrder;
 
 /**
@@ -45,6 +49,10 @@ class Payment implements BindFuncInterface{
 		Refund::class,
 		RefundQuery::class,
 		Reverse::class,
+		Transfers::class,
+		TransfersQuery::class,
+		PayBank::class,
+		PayBankQuery::class,
 	];
 
 	/**
@@ -81,75 +89,6 @@ class Payment implements BindFuncInterface{
 		}
 	}
 
-	//	/**
-	//	 * 获取配置
-	//	 *
-	//	 * @param string $key
-	//	 * @param mixed  $default
-	//	 * @return mixed
-	//	 */
-	//	public function getConfig($key, $default = null){
-	//		return isset($this->config[$key]) ? $this->config[$key] : $default;
-	//	}
-	//
-	//	/**
-	//	 * 配置是否存在
-	//	 *
-	//	 * @param string $key
-	//	 * @return bool
-	//	 */
-	//	public function hasConfig($key){
-	//		return isset($this->config[$key]);
-	//	}
-
-	//	/**
-	//	 * 静态调用处理
-	//	 *
-	//	 * @param string $name
-	//	 * @param array  $arguments
-	//	 * @return mixed
-	//	 */
-	//	public static function __callStatic($name, $arguments){
-	//		if(in_array($name, [
-	//			'unifiedOrder',
-	//			'orderQuery',
-	//			'closeOrder',
-	//			'refund',
-	//			'refundQuery',
-	//			'reverse',
-	//		])){
-	//			$options = array_shift($arguments);
-	//			return call_user_func_array([
-	//				self::factory($name, $options),
-	//				$name,
-	//			], $arguments);
-	//		}
-	//		return self::factory($name, $arguments[0]);
-	//		//		if(strpos($name, "factory") === 0){
-	//		//			$driver = substr($name, 7);
-	//		//			return self::factory($driver, $arguments[0]);
-	//		//		}
-	//		//		throw new BadMethodCallException("{$name}方法不存在！");
-	//	}
-	//
-	//	/**
-	//	 * 构聚合建支付API实例
-	//	 *
-	//	 * @param string $driver
-	//	 * @param array  $options
-	//	 * @return mixed
-	//	 */
-	//	public static function factory($driver, $options = []){
-	//		if(stripos($driver, '\\') !== 0){
-	//			$driver = "\\xin\\payment\\driver\\{$driver}";
-	//		}
-	//
-	//		if(!class_exists($driver)){
-	//			throw new RuntimeException("支付驱动不存在：{$driver}");
-	//		}
-	//
-	//		return new $driver($options);
-	//	}
 	/**
 	 * 绑定函数
 	 *

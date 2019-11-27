@@ -11,7 +11,7 @@ namespace xin\payment\func;
 use xin\payment\ConfigInterface;
 use xin\payment\entity\PaymentInput;
 
-class TransferQuery extends BaseFunc{
+class TransfersQuery extends BaseFunc{
 
 	/**
 	 * 支付宝

@@ -15,10 +15,14 @@ use xin\payment\PaymentException;
 /**
  * 请求结果
  *
- * @property \xin\payment\ConfigInterface config
  * @package xin\payment\data
  */
 class PaymentOutput extends PaymentData{
+
+	/**
+	 * @var \xin\payment\ConfigInterface
+	 */
+	private $config = null;
 
 	/**
 	 * PaymentResult constructor.
@@ -29,6 +33,15 @@ class PaymentOutput extends PaymentData{
 	public function __construct(array $data = [], ConfigInterface $config = null){
 		parent::__construct($data);
 		$this->config = $config;
+	}
+
+	/**
+	 * 获取配置
+	 *
+	 * @return \xin\payment\ConfigInterface
+	 */
+	public function getConfig(){
+		return $this->config;
 	}
 
 	/**
