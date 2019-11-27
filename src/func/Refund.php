@@ -58,6 +58,10 @@ class Refund extends BaseFunc{
 		// 初始化input
 		WxPayUtil::initWxPayInput($config, $input);
 
+		// 设置支付签名
+		$sign = WxPayUtil::makeSign($input->toArray(), $config->getWxPayKey());
+		$input->setSign($sign);
+
 		list($certPath, $certKeyPath) = $config->getWxPaySslCertPath();
 		$requestOptions = [
 			'ssl_cert_path' => $certPath,

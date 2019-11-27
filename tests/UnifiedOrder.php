@@ -5,10 +5,10 @@
  * @author: BD<liuxingwu@duoguan.com>
  * @date: 2019/6/22 15:45
  */
+use xin\payment\entity\UnifiedOrderInput;
 use xin\payment\PaymentException;
 use xin\payment\PayType;
 use xin\payment\TradeType;
-use xin\payment\UnifiedOrderOptions;
 
 require_once '../vendor/autoload.php';
 require_once './init.php';
@@ -16,7 +16,7 @@ require_once './init.php';
 $orderSn = time();
 var_dump($orderSn);
 
-$input = new UnifiedOrderOptions();
+$input = new UnifiedOrderInput();
 $input->setSubAppid('wx12345678910');
 $input->setSubOpenid('o9F2bs2V9FUlaoeggfIo94YRWVS4');
 $input->setOutTradeNo($orderSn);

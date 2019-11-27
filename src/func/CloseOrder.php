@@ -49,6 +49,10 @@ class CloseOrder extends BaseFunc{
 		// 初始化input
 		WxPayUtil::initWxPayInput($config, $input);
 
+		// 设置支付签名
+		$sign = WxPayUtil::makeSign($input->toArray(), $config->getWxPayKey());
+		$input->setSign($sign);
+
 		$url = "https://api.mch.weixin.qq.com/pay/closeorder";
 		$response = WxPayUtil::request($url, $input->toXml());
 		$result = WxPayUtil::makeOutput($response, CloseOrderOutput::class, $config);

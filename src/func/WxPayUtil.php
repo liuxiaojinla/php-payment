@@ -46,7 +46,7 @@ class WxPayUtil{
 		//设置超时
 		$timeout = isset($options['timeout']) ? $options['timeout'] : 6;
 		if($timeout){
-			curl_setopt($ch, CURLOPT_TIMEOUT, $options['timeout']);
+			curl_setopt($ch, CURLOPT_TIMEOUT, $timeout);
 		}
 
 		//如果有配置代理这里就设置代理

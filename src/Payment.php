@@ -9,18 +9,6 @@
 
 namespace xin\payment;
 
-use xin\payment\entity\CloseOrderInput;
-use xin\payment\entity\CloseOrderOutput;
-use xin\payment\entity\OrderQueryInput;
-use xin\payment\entity\OrderQueryOutput;
-use xin\payment\entity\RefundInput;
-use xin\payment\entity\RefundQueryInput;
-use xin\payment\entity\RefundQueryOutput;
-use xin\payment\entity\RefundOutput;
-use xin\payment\entity\ReverseInput;
-use xin\payment\entity\ReverseOutput;
-use xin\payment\entity\UnifiedOrderInput;
-use xin\payment\entity\UnifiedOrderOutput;
 use xin\payment\func\CloseOrder;
 use xin\payment\func\OrderQuery;
 use xin\payment\func\Refund;
@@ -30,12 +18,16 @@ use xin\payment\func\UnifiedOrder;
 
 /**
  * 统一支付
- * @method UnifiedOrderOutput unifiedOrder(UnifiedOrderInput $input) 统一下单
- * @method OrderQueryOutput orderQuery(OrderQueryInput $input) 查询订单
- * @method CloseOrderOutput closeOrder(CloseOrderInput $input) 关闭订单
- * @method RefundOutput refund(RefundInput $input) 申请退款
- * @method RefundQueryOutput refundQuery(RefundQueryInput $input) 退款查询
- * @method ReverseOutput reverse(ReverseInput $input) 撤销订单
+ * @method \xin\payment\entity\UnifiedOrderOutput unifiedOrder(\xin\payment\entity\UnifiedOrderInput $input) 统一下单
+ * @method \xin\payment\entity\OrderQueryOutput orderQuery(\xin\payment\entity\OrderQueryInput $input) 查询订单
+ * @method \xin\payment\entity\CloseOrderOutput closeOrder(\xin\payment\entity\CloseOrderInput $input) 关闭订单
+ * @method \xin\payment\entity\RefundOutput refund(\xin\payment\entity\RefundInput $input) 申请退款
+ * @method \xin\payment\entity\RefundQueryOutput refundQuery(\xin\payment\entity\RefundQueryInput $input) 退款查询
+ * @method \xin\payment\entity\ReverseOutput reverse(\xin\payment\entity\ReverseInput $input) 撤销订单
+ * @method \xin\payment\entity\TransfersOutput transfers(\xin\payment\entity\TransfersInput $input) 企业打款到零钱
+ * @method \xin\payment\entity\TransfersQueryOutput transferQuery(\xin\payment\entity\TransfersQueryInput $input) 企业打款到零钱查询
+ * @method \xin\payment\entity\PayBankOutput payBank(\xin\payment\entity\PayBankInput $input) 企业打款到银行卡
+ * @method \xin\payment\entity\PayBankQueryOutput payBankQuery(\xin\payment\entity\PayBankQueryInput $input) 企业打款到银行卡查询
  *
  * @package xin\payment
  */
