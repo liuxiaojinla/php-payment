@@ -23,6 +23,14 @@ class Notify implements ProviderInterface{
 	 */
 	public function bindCall(BindFuncInterface $func, ConfigInterface $config){
 		// TODO: Implement bindCall() method.
+
+		$classname = get_class($this);
+		$classname = basename($classname);
+		$classname = lcfirst($classname);
+
+		$func->bind($classname, function(ConfigInterface $config, &$msg){
+			return $this->onWxPay($msg);
+		});
 	}
 
 	/**
@@ -45,5 +53,13 @@ class Notify implements ProviderInterface{
 		}
 
 		return null;
+	}
+
+	/**
+	 * 支付结果通用通知
+	 *
+	 * @param string $msg
+	 */
+	private function onAlipay(&$msg){
 	}
 }
