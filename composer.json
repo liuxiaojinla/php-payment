@@ -2,7 +2,7 @@
 	"name":"xin/payment",
 	"description":"统一化微信支付、支付宝支付API",
 	"type":"library",
-	"version":"2.0.0",
+	"version":"4.0.0",
 	"authors":[
 		{
 			"name":"晋",
