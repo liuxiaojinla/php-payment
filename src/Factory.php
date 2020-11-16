@@ -17,8 +17,11 @@ use Xin\Payment\Kernel\Support\Str;
  * @method \Xin\Payment\Bus\Base\UnifiedOrderOutput unifiedOrder(\Xin\Payment\Bus\Base\UnifiedOrderInput $input)
  * @method \Xin\Payment\Bus\Base\OrderQueryOutput orderQuery(\Xin\Payment\Bus\Base\OrderQueryInput $input)
  * @method \Xin\Payment\Bus\Base\RefundOutput refund(\Xin\Payment\Bus\Base\RefundInput $input)
- * @method \Xin\Payment\Bus\Base\RefundQueryInput refundQuery(\Xin\Payment\Bus\Base\RefundQueryInput $input)
+ * @method \Xin\Payment\Bus\Base\RefundQueryOutput refundQuery(\Xin\Payment\Bus\Base\RefundQueryInput $input)
  * @method \Xin\Payment\Bus\Base\CloseOrderOutput closeOrder(\Xin\Payment\Bus\Base\CloseOrderInput $input)
+ * @method \Xin\Payment\Bus\Base\ReverseOutput reverse(\Xin\Payment\Bus\Base\ReverseInput $input)
+ * @method \Xin\Payment\Bus\Transfer\TransfersOutput transfer(\Xin\Payment\Bus\Transfer\TransfersOutput $input)
+ * @method \Xin\Payment\Bus\Transfer\TransfersQueryOutput transferQuery(\Xin\Payment\Bus\Transfer\TransfersQueryOutput $input)
  */
 class Factory{
 	
@@ -183,7 +186,9 @@ class Factory{
 			throw new \RuntimeException("call function first arguments must of [\Xin\Payment\Bus\Input] type.");
 		}
 		
-		$converter = $this->resolveConverter($name, $input->getChannel());
+		$channel = $input->getChannel();
+		
+		$converter = $this->resolveConverter($name, $channel);
 		
 		if($converter){
 			$arguments[0] = $converter->convertInput($input);

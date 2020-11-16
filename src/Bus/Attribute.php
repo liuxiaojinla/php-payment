@@ -93,6 +93,19 @@ abstract class Attribute implements \ArrayAccess, \IteratorAggregate, \JsonSeria
 	}
 	
 	/**
+	 * 转换相关的键名并返回全新的实例
+	 *
+	 * @param array $keysMap
+	 * @return static
+	 */
+	public function withTransformKeys(array $keysMap = []){
+		$clone = clone $this;
+		$clone->data = Arr::transformKeys($clone->data, $keysMap);
+		
+		return $clone;
+	}
+	
+	/**
 	 * 输出xml字符
 	 *
 	 * @param array $keysMap

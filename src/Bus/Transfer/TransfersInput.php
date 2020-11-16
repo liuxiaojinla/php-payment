@@ -6,7 +6,9 @@
  * @date: 2019/11/27 11:23
  */
 
-namespace Xin\Payment\Bus;
+namespace Xin\Payment\Bus\Transfer;
+
+use Xin\Payment\Bus\Input;
 
 /**
  * Class TransfersInput

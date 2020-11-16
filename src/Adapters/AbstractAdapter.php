@@ -162,14 +162,16 @@ abstract class AbstractAdapter{
 	 * @throws \Exception
 	 */
 	public function __call($name, $arguments){
+		/** @var Input $input */
 		$input = isset($arguments[0]) ? $arguments[0] : null;
-		$arguments = $this->parseInput($name, $arguments);
-		
+		$channel = $input ? $input->getChannel() : null;
 		$realMethod = $this->realMethodName($name, $input);
+		
+		$arguments = $this->parseInput($name, $arguments);
 		
 		try{
 			$result = call_user_func_array([
-				$this->gateway(), $realMethod,
+				$this->gateway($channel), $realMethod,
 			], $arguments);
 		}catch(\Exception $e){
 			throw $this->castException($e);

@@ -19,7 +19,7 @@ $input->setNotifyUrl('https://www.baidu.com');
 $input->setOpenid('o49390NOh_fmsdpZCEgoWbC_8nws');
 
 $input->setChannel(PayChannel::WECHAT);
-//$input->setChannel(PayChannel::ALIPAY);
+$input->setChannel(PayChannel::ALIPAY);
 
 $input->setTradeType(TradeType::JSAPI);
 $input->setTradeType(TradeType::NATIVE);

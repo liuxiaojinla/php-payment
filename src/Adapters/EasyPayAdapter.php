@@ -23,7 +23,7 @@ class EasyPayAdapter extends AbstractAdapter{
 	/**
 	 * @var string[]
 	 */
-	protected $unifiedOrderMap = [
+	protected $wechatUnifiedOrderMap = [
 		TradeType::NATIVE   => 'scan',
 		TradeType::SCAN     => 'pos',
 		TradeType::JSAPI    => 'mp',
@@ -35,11 +35,11 @@ class EasyPayAdapter extends AbstractAdapter{
 	/**
 	 * @var string[]
 	 */
-	protected $alipayMap = [
+	protected $alipayUnifiedOrderMap = [
 		TradeType::NATIVE   => 'scan',
 		TradeType::SCAN     => 'pos',
-		TradeType::JSAPI    => 'mp',
-		TradeType::MINI_APP => 'miniapp',
+		TradeType::JSAPI    => 'mini',
+		TradeType::MINI_APP => 'mini',
 		TradeType::APP      => 'app',
 		TradeType::WAP      => 'wap',
 	];
@@ -145,9 +145,11 @@ class EasyPayAdapter extends AbstractAdapter{
 		if('unifiedOrder' == $name){
 			/** @var \Xin\Payment\Bus\Base\UnifiedOrderInput $input */
 			if($channel === PayChannel::ALIPAY){
+				$tradeType = $input->getTradeType();
+				return $this->alipayUnifiedOrderMap[$tradeType];
 			}else{
 				$tradeType = $input->getTradeType();
-				return $this->unifiedOrderMap[$tradeType];
+				return $this->wechatUnifiedOrderMap[$tradeType];
 			}
 		}
 		
