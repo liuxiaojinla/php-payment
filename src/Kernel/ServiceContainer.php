@@ -31,61 +31,27 @@ class ServiceContainer extends Container{
 	protected $providers = [];
 	
 	/**
-	 * @var array
-	 */
-	protected $defaultConfig = [];
-	
-	/**
-	 * @var array
-	 */
-	protected $userConfig = [];
-	
-	/**
 	 * Constructor.
 	 *
 	 * @param array $config
 	 * @param array $prepends
 	 */
 	public function __construct(array $config = [], array $prepends = []){
-		$this->registerProviders($this->getProviders());
-		
-		parent::__construct($prepends);
-		
-		$this->userConfig = $config;
-		
-		$this->events->dispatch(new Events\ApplicationInitialized($this));
-	}
-	
-	/**
-	 * @return array
-	 */
-	public function getConfig(){
-		$base = [
+		$this['config'] = new Config(array_replace_recursive([
 			// http://docs.guzzlephp.org/en/stable/request-options.html
 			'http' => [
-				'timeout' => 30.0,
+				'timeout' => 15.0,
 				// 'base_uri' => 'https://api.weixin.qq.com/',
 			],
 			
 			// 'response_type' => 'raw',
-		];
+		], $config));
 		
-		return array_replace_recursive($base, $this->defaultConfig, $this->userConfig);
-	}
-	
-	/**
-	 * Return all providers.
-	 *
-	 * @return array
-	 */
-	public function getProviders(){
-		return array_merge([
-			ConfigServiceProvider::class,
-			LogServiceProvider::class,
-			RequestServiceProvider::class,
-			HttpClientServiceProvider::class,
-			EventDispatcherServiceProvider::class,
-		], $this->providers);
+		$this->registerProviders($this->getProviders());
+		
+		parent::__construct($prepends);
+		
+		$this->events->dispatch(new Events\ApplicationInitialized($this));
 	}
 	
 	/**
@@ -118,9 +84,23 @@ class ServiceContainer extends Container{
 	}
 	
 	/**
+	 * Return all providers.
+	 *
+	 * @return array
+	 */
+	protected function getProviders(){
+		return array_merge([
+			LogServiceProvider::class,
+			RequestServiceProvider::class,
+			HttpClientServiceProvider::class,
+			EventDispatcherServiceProvider::class,
+		], $this->providers);
+	}
+	
+	/**
 	 * @param array $providers
 	 */
-	public function registerProviders(array $providers){
+	protected function registerProviders(array $providers){
 		foreach($providers as $provider){
 			parent::register(new $provider());
 		}
