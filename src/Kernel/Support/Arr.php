@@ -8,9 +8,6 @@
 
 namespace Xin\Payment\Kernel\Support;
 
-/**
- * Array helper from Illuminate\Support\Arr.
- */
 class Arr{
 	
 	/**

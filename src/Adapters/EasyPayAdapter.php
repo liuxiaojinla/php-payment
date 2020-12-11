@@ -11,9 +11,12 @@ use Xin\Payment\Bus\Base\UnifiedOrderInput;
 use Xin\Payment\Bus\Input;
 use Xin\Payment\Bus\PayChannel;
 use Xin\Payment\Bus\TradeType;
-use Xin\Payment\Bus\TransfersQueryInput;
+use Xin\Payment\Bus\Transfer\TransfersQueryInput;
+use Xin\Payment\Exceptions\BusinessException;
 use Xin\Payment\Exceptions\GatewayException;
+use Xin\Payment\Exceptions\InvalidArgumentException;
 use Xin\Payment\Exceptions\InvalidConfigException;
+use Xin\Payment\Exceptions\InvalidSignException;
 use Yansongda\Pay\Exceptions;
 use Yansongda\Pay\Pay;
 use Yansongda\Supports\Collection;
@@ -165,7 +168,17 @@ class EasyPayAdapter extends AbstractAdapter{
 	 * @return \Exception
 	 */
 	protected function castException(\Exception $e){
-		if($e instanceof Exceptions\GatewayException){
+		if($e instanceof Exceptions\InvalidSignException){
+			$e = new InvalidSignException($e->getMessage());
+		}elseif($e instanceof Exceptions\InvalidArgumentException){
+			$e = new InvalidArgumentException($e->getMessage());
+		}elseif($e instanceof Exceptions\InvalidConfigException){
+			$e = new InvalidConfigException($e->getMessage());
+		}elseif($e instanceof Exceptions\BusinessException){
+			$e = new BusinessException(
+				str_replace("ERROR_GATEWAY: ERROR_BUSINESS:", "", $e->getMessage()),
+				$e->raw);
+		}elseif($e instanceof Exceptions\GatewayException){
 			$e = new GatewayException(
 				str_replace("ERROR_GATEWAY: ", "", $e->getMessage()),
 				$e->raw, $e->getCode());

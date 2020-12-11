@@ -18,6 +18,6 @@ class BusinessException extends GatewayException{
 	 * @author yansongda <me@yansonga.cn>
 	 */
 	public function __construct($message, $raw = []){
-		parent::__construct('ERROR_BUSINESS: '.$message, $raw, self::ERROR_BUSINESS);
+		parent::__construct($message, $raw, self::ERROR_BUSINESS);
 	}
 }

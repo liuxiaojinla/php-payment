@@ -11,14 +11,11 @@ namespace Xin\Payment\Exceptions;
 class GatewayException extends Exception{
 	
 	/**
-	 * Bootstrap.
-	 *
 	 * @param string       $message
 	 * @param array|string $raw
 	 * @param int          $code
-	 * @author yansongda <me@yansonga.cn>
 	 */
 	public function __construct($message, $raw = [], $code = self::ERROR_GATEWAY){
-		parent::__construct('ERROR_GATEWAY: '.$message, $raw, $code);
+		parent::__construct($message, $raw, $code);
 	}
 }

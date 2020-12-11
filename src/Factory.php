@@ -8,6 +8,7 @@
 namespace Xin\Payment;
 
 use Xin\Payment\Bus\Input;
+use Xin\Payment\Bus\PayChannel;
 use Xin\Payment\Kernel\Support\Arr;
 use Xin\Payment\Kernel\Support\Str;
 
@@ -194,7 +195,9 @@ class Factory{
 			$arguments[0] = $converter->convertInput($input);
 		}
 		
-		$output = call_user_func_array([$this->adapter(), $name], $arguments);
+		$output = call_user_func_array([
+			$this->adapter(), $name,
+		], $arguments);
 		
 		if($converter){
 			$output = $converter->convertOutput($output, $input, $this->config);
@@ -236,6 +239,24 @@ class Factory{
 		return call_user_func_array([
 			static::$defaultInstance, $name,
 		], $arguments);
+	}
+	
+	/**
+	 * 同步支付渠道商的回调结果
+	 *
+	 * @param string $channel
+	 * @param mixed  $errMsg
+	 * @return string
+	 */
+	public static function notifyResult($channel, $errMsg = null){
+		$isSuccess = empty($errMsg);
+		$errMsg = is_array($errMsg) || is_object($errMsg) ? json_encode($errMsg, JSON_UNESCAPED_UNICODE) : $errMsg;
+		if(PayChannel::ALIPAY == $channel){
+			return "";
+		}else{
+			$state = $isSuccess ? 'SUCCESS' : 'FAIL';
+			return "<xml><return_code><![CDATA[{$state}]]></return_code><return_msg><![CDATA[{$errMsg}]]></return_msg></xml>";
+		}
 	}
 	
 }

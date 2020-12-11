@@ -32,12 +32,9 @@ class Exception extends \Exception{
 	public $raw;
 	
 	/**
-	 * Bootstrap.
-	 *
 	 * @param string       $message
 	 * @param array|string $raw
 	 * @param int|string   $code
-	 * @author yansongda <me@yansonga.cn>
 	 */
 	public function __construct($message = '', $raw = [], $code = self::UNKNOWN_ERROR){
 		$message = '' === $message ? 'Unknown Error' : $message;

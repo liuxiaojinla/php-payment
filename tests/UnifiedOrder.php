@@ -2,6 +2,7 @@
 use Xin\Payment\Bus\Base\UnifiedOrderInput;
 use Xin\Payment\Bus\PayChannel;
 use Xin\Payment\Bus\TradeType;
+use Xin\Payment\Factory;
 
 require_once '../vendor/autoload.php';
 $payment = require_once './init.php';
@@ -19,7 +20,7 @@ $input->setNotifyUrl('https://www.baidu.com');
 $input->setOpenid('o49390NOh_fmsdpZCEgoWbC_8nws');
 
 $input->setChannel(PayChannel::WECHAT);
-$input->setChannel(PayChannel::ALIPAY);
+//$input->setChannel(PayChannel::ALIPAY);
 
 $input->setTradeType(TradeType::JSAPI);
 $input->setTradeType(TradeType::NATIVE);
@@ -42,3 +43,5 @@ if($result->getTradeType() === TradeType::JSAPI || TradeType::MINI_APP === $resu
 	var_dump("prepay_id:".$result->getPrepayId());
 	var_dump("code_url:".$result->getCodeUrl());
 }
+
+Factory::notifyResult($input->getChannel());
