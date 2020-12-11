@@ -9,10 +9,7 @@ namespace Xin\Payment\Kernel\Events;
 
 use Psr\Http\Message\ResponseInterface;
 
-/**
- * Class HttpResponseCreated.
- *
- */
+
 class HttpResponseCreated{
 	
 	/**

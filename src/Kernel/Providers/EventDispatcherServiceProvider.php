@@ -11,11 +11,6 @@ use Pimple\Container;
 use Pimple\ServiceProviderInterface;
 use Symfony\Component\EventDispatcher\EventDispatcher;
 
-/**
- * Class EventDispatcherServiceProvider.
- *
- * @author mingyoung <mingyoungcheung@gmail.com>
- */
 class EventDispatcherServiceProvider implements ServiceProviderInterface{
 	
 	/**

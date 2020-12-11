@@ -9,9 +9,7 @@ namespace Xin\Payment\Kernel\Events;
 
 use Xin\Payment\Kernel\ServiceContainer;
 
-/**
- * Class ApplicationInitialized.
- */
+
 class ApplicationInitialized{
 	
 	/**

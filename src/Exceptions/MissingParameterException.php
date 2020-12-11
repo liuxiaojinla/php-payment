@@ -7,6 +7,6 @@
 
 namespace Xin\Payment\Exceptions;
 
-class MissingParameterException extends Exception{
+class MissingParameterException extends BusinessException{
 
 }

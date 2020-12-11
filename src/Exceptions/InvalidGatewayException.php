@@ -11,11 +11,8 @@ namespace Xin\Payment\Exceptions;
 class InvalidGatewayException extends Exception{
 	
 	/**
-	 * Bootstrap.
-	 *
 	 * @param string       $message
 	 * @param array|string $raw
-	 * @author yansongda <me@yansonga.cn>
 	 */
 	public function __construct($message, $raw = []){
 		parent::__construct('INVALID_GATEWAY: '.$message, $raw, self::INVALID_GATEWAY);

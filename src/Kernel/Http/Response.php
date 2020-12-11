@@ -12,9 +12,7 @@ use Psr\Http\Message\ResponseInterface;
 use Xin\Payment\Kernel\Support\Collection;
 use Xin\Payment\Kernel\Support\XML;
 
-/**
- * Class Response.
- */
+
 class Response extends GuzzleResponse{
 	
 	/**

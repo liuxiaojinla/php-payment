@@ -11,9 +11,6 @@ use Pimple\Container;
 use Pimple\ServiceProviderInterface;
 use Symfony\Component\HttpFoundation\Request;
 
-/**
- * Class RequestServiceProvider.
- */
 class RequestServiceProvider implements ServiceProviderInterface{
 	
 	/**

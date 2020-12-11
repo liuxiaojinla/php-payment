@@ -11,9 +11,6 @@ use Pimple\Container;
 use Pimple\ServiceProviderInterface;
 use Xin\Payment\Kernel\Log\LogManager;
 
-/**
- * Class LoggingServiceProvider.
- */
 class LogServiceProvider implements ServiceProviderInterface{
 	
 	/**

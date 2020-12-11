@@ -11,11 +11,8 @@ namespace Xin\Payment\Exceptions;
 class BusinessException extends GatewayException{
 	
 	/**
-	 * Bootstrap.
-	 *
 	 * @param string       $message
 	 * @param array|string $raw
-	 * @author yansongda <me@yansonga.cn>
 	 */
 	public function __construct($message, $raw = []){
 		parent::__construct($message, $raw, self::ERROR_BUSINESS);

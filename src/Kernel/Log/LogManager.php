@@ -21,9 +21,6 @@ use Monolog\Logger as Monolog;
 use Psr\Log\LoggerInterface;
 use Xin\Payment\Kernel\ServiceContainer;
 
-/**
- * Class LogManager.
- */
 class LogManager implements LoggerInterface{
 	
 	/**

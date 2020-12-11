@@ -11,9 +11,6 @@ use GuzzleHttp\Client;
 use Pimple\Container;
 use Pimple\ServiceProviderInterface;
 
-/**
- * Class HttpClientServiceProvider.
- */
 class HttpClientServiceProvider implements ServiceProviderInterface{
 	
 	/**
