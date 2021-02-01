@@ -8,16 +8,18 @@
  */
 namespace Xin\Payment\Bus;
 
-use Xin\Payment\Exceptions\InvalidArgumentException;
 use Xin\Payment\Exceptions\MissingParameterException;
-use Xin\Payment\Kernel\Support\Arr;
-use Xin\Payment\Kernel\Support\Str;
+use Xin\Payment\Support\Arr;
+use Xin\Payment\Support\Str;
 
 /**
  * 支付参数基类
  */
 abstract class Attribute implements \ArrayAccess, \IteratorAggregate, \JsonSerializable{
 	
+	/**
+	 * @var string
+	 */
 	protected $channel = 'wechat';
 	
 	/**
@@ -110,13 +112,8 @@ abstract class Attribute implements \ArrayAccess, \IteratorAggregate, \JsonSeria
 	 *
 	 * @param array $keysMap
 	 * @return string
-	 * @throws \Xin\Payment\Exceptions\InvalidArgumentException
 	 */
 	public function toXml(array $keysMap = []){
-		if(count($this->data) <= 0){
-			throw new InvalidArgumentException("数组数据异常！");
-		}
-		
 		$data = $this->toArray($keysMap);
 		
 		$xml = "<xml>";
@@ -191,16 +188,6 @@ abstract class Attribute implements \ArrayAccess, \IteratorAggregate, \JsonSeria
 	 */
 	public function get($key, $default = null){
 		return Arr::get($this->data, $key, $default);
-		//		if(is_array($key)){
-		//			foreach($key as $k){
-		//				if(isset($this->data[$k])){
-		//					return $this->data[$k];
-		//				}
-		//			}
-		//		}else{
-		//			if(isset($this->data[$key])) return $this->data[$key];
-		//		}
-		//		return $default;
 	}
 	
 	/**

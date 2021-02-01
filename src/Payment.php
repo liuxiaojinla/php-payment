@@ -8,9 +8,10 @@
 namespace Xin\Payment;
 
 use Xin\Payment\Bus\Input;
-use Xin\Payment\Bus\PayChannel;
-use Xin\Payment\Kernel\Support\Arr;
-use Xin\Payment\Kernel\Support\Str;
+use Xin\Payment\Bus\Output;
+use Xin\Payment\Bus\PayChannelEnum;
+use Xin\Payment\Support\Arr;
+use Xin\Payment\Support\Str;
 
 /**
  * Class Factory.
@@ -24,7 +25,7 @@ use Xin\Payment\Kernel\Support\Str;
  * @method \Xin\Payment\Bus\Transfer\TransfersOutput transfer(\Xin\Payment\Bus\Transfer\TransfersOutput $input)
  * @method \Xin\Payment\Bus\Transfer\TransfersQueryOutput transferQuery(\Xin\Payment\Bus\Transfer\TransfersQueryOutput $input)
  */
-class Factory{
+class Payment{
 	
 	/**
 	 * @var static
@@ -36,7 +37,7 @@ class Factory{
 	 */
 	protected $config = [
 		'defaults' => [
-			'adapter' => 'base',
+			'adapter' => 'EasyPay',
 		],
 		
 		'channels' => [
@@ -87,7 +88,7 @@ class Factory{
 	 */
 	public function shouldUseAdapter($name){
 		Arr::set($this->config, 'defaults.adapter', $name);
-		$this->adapter();
+		$this->adapter($name);
 	}
 	
 	/**
@@ -133,7 +134,6 @@ class Factory{
 	protected function createAdapter($name){
 		$className = Str::studly($name);
 		$realClass = "\\Xin\\Payment\\Adapters\\{$className}Adapter";
-		
 		return new $realClass($this->config('channels'));
 	}
 	
@@ -150,7 +150,7 @@ class Factory{
 		}
 		
 		if(!isset($this->converters[$channel][$name])){
-			$this->converters[$channel][$name] = $this->createConverter($name, $channel);
+			$this->converters[$channel][$name] = $this->createConverter($channel, $name);
 		}
 		
 		return $this->converters[$channel][$name];
@@ -159,15 +159,15 @@ class Factory{
 	/**
 	 * 解析转换器
 	 *
-	 * @param string $name
 	 * @param string $channel
+	 * @param string $name
 	 * @return \Xin\Payment\Kernel\Contracts\Converter
 	 */
-	protected function createConverter($name, $channel){
+	protected function createConverter($channel, $name){
 		$channelPath = Str::studly($channel);
 		$className = Str::studly($name);
-		$realClass = "\\Xin\\Payment\\Converters\\{$channelPath}\\{$className}Converter";
 		
+		$realClass = "\\Xin\\Payment\\Converters\\{$channelPath}\\{$className}Converter";
 		if(!class_exists($realClass)){
 			return null;
 		}
@@ -189,20 +189,19 @@ class Factory{
 		
 		$channel = $input->getChannel();
 		
-		$converter = $this->resolveConverter($name, $channel);
-		
+		$converter = $this->resolveConverter($channel, $name);
 		if($converter){
 			$arguments[0] = $converter->convertInput($input);
 		}
 		
-		$output = call_user_func_array([
+		$result = call_user_func_array([
 			$this->adapter(), $name,
 		], $arguments);
 		
 		if($converter){
-			$output = $converter->convertOutput($output, $input, $this->config);
+			$output = $converter->convertOutput($result, $input, $this->config);
 		}else{
-			$output = $input->makeOutput($output, $this->config);
+			$output = Output::formResponse($result, $input, $this->config);
 		}
 		
 		return $output;
@@ -218,7 +217,7 @@ class Factory{
 	public static function make($config, $name = null){
 		return static::$defaultInstance = new static([
 			'defaults' => [
-				'adapter' => $name ? $name : "Base",
+				'adapter' => $name ? $name : "EasyPay",
 			],
 			'channels' => $config,
 		]);
@@ -251,7 +250,7 @@ class Factory{
 	public static function notifyResult($channel, $errMsg = null){
 		$isSuccess = empty($errMsg);
 		$errMsg = is_array($errMsg) || is_object($errMsg) ? json_encode($errMsg, JSON_UNESCAPED_UNICODE) : $errMsg;
-		if(PayChannel::ALIPAY == $channel){
+		if(PayChannelEnum::ALIPAY == $channel){
 			return "";
 		}else{
 			$state = $isSuccess ? 'SUCCESS' : 'FAIL';

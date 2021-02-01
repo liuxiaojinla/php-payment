@@ -11,7 +11,7 @@ namespace Xin\Payment\Bus;
 /**
  * 支付渠道
  */
-interface PayChannel{
+final class PayChannelEnum{
 	
 	/**
 	 * 微信

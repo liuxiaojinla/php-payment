@@ -8,7 +8,7 @@
  */
 namespace Xin\Payment\Exceptions;
 
-class Exception extends \Exception{
+class PaymentException extends \Exception{
 	
 	const UNKNOWN_ERROR = 9999;
 	

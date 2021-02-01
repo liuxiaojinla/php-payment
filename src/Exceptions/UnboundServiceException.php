@@ -7,6 +7,6 @@
 
 namespace Xin\Payment\Exceptions;
 
-class UnboundServiceException extends Exception{
+class UnboundServiceException extends PaymentException{
 
 }

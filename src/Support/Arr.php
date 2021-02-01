@@ -6,7 +6,7 @@
  * @date: 2019/6/3 16:10
  */
 
-namespace Xin\Payment\Kernel\Support;
+namespace Xin\Payment\Support;
 
 class Arr{
 	

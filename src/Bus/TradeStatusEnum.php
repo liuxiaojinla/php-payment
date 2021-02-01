@@ -11,7 +11,7 @@ namespace Xin\Payment;
 /**
  * 交易状态
  */
-interface TradeStatus{
+final class TradeStatusEnum{
 	
 	/**
 	 * 用户支付中

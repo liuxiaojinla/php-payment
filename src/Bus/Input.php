@@ -9,25 +9,12 @@
 
 namespace Xin\Payment\Bus;
 
-use Xin\Payment\Kernel\Support\Str;
+use Xin\Payment\Support\Str;
 
 /**
  * 请求参数
  */
 abstract class Input extends Attribute{
-	
-	//	/**
-	//	 * 设置数据签名
-	//	 *
-	//	 * @param string|callable $sign
-	//	 */
-	//	public function setSign($sign){
-	//		if(is_callable($sign)){
-	//			$sign = call_user_func($sign, $this->data);
-	//		}
-	//
-	//		$this->set('sign', $sign);
-	//	}
 	
 	/**
 	 * 获取支付渠道
@@ -61,26 +48,6 @@ abstract class Input extends Attribute{
 	}
 	
 	/**
-	 * 生成输出实例
-	 *
-	 * @param mixed $output
-	 * @param array $config
-	 * @return \Xin\Payment\Bus\Output
-	 */
-	public function makeOutput($output, $config = []){
-		$outputClass = substr(get_class($this), 0, -5)."Output";
-		if(!class_exists($outputClass)){
-			return $output;
-		}
-		
-		if(method_exists($outputClass, '__make')){
-			return call_user_func([$outputClass, '__make'], $output, $this, $config);
-		}
-		
-		return new $outputClass($output, $this, $config, $output);
-	}
-	
-	/**
 	 * 设置数据
 	 *
 	 * @param string $name
@@ -97,29 +64,6 @@ abstract class Input extends Attribute{
 	 */
 	public function __unset($name){
 		$this->remove($name);
-	}
-	
-	/**
-	 * 动态调用函数
-	 *
-	 * @param string $name
-	 * @param array  $arguments
-	 * @return mixed
-	 */
-	public function __call($name, $arguments){
-		$prefix = substr($name, 0, 3);
-		$key = Str::snake(substr($name, 3));
-		
-		if('get' == $prefix){
-			$default = isset($arguments[0]) ? $arguments[0] : null;
-			return $this->get($key, $default);
-		}elseif('set' == $prefix){
-			return $this->set($key, $arguments[0]);
-		}elseif('has'){
-			return $this->has($key);
-		}
-		
-		throw new \BadMethodCallException("{$name}方法不存在！");
 	}
 	
 	/**
@@ -151,5 +95,28 @@ abstract class Input extends Attribute{
 	 */
 	public function offsetUnset($offset){
 		$this->remove($offset);
+	}
+	
+	/**
+	 * 动态调用函数
+	 *
+	 * @param string $name
+	 * @param array  $arguments
+	 * @return mixed
+	 */
+	public function __call($name, $arguments){
+		$prefix = substr($name, 0, 3);
+		$key = Str::snake(substr($name, 3));
+		
+		if('get' == $prefix){
+			$default = isset($arguments[0]) ? $arguments[0] : null;
+			return $this->get($key, $default);
+		}elseif('set' == $prefix){
+			return $this->set($key, $arguments[0]);
+		}elseif('has'){
+			return $this->has($key);
+		}
+		
+		throw new \BadMethodCallException("{$name}方法不存在！");
 	}
 }

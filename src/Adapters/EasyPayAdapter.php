@@ -9,8 +9,8 @@ namespace Xin\Payment\Adapters;
 use Xin\Payment\Bus\Base\RefundQueryInput;
 use Xin\Payment\Bus\Base\UnifiedOrderInput;
 use Xin\Payment\Bus\Input;
-use Xin\Payment\Bus\PayChannel;
-use Xin\Payment\Bus\TradeType;
+use Xin\Payment\Bus\PayChannelEnum;
+use Xin\Payment\Bus\TradeTypeEnum;
 use Xin\Payment\Bus\Transfer\TransfersQueryInput;
 use Xin\Payment\Exceptions\BusinessException;
 use Xin\Payment\Exceptions\GatewayException;
@@ -27,24 +27,24 @@ class EasyPayAdapter extends AbstractAdapter{
 	 * @var string[]
 	 */
 	protected $wechatUnifiedOrderMap = [
-		TradeType::NATIVE   => 'scan',
-		TradeType::SCAN     => 'pos',
-		TradeType::JSAPI    => 'mp',
-		TradeType::MINI_APP => 'miniapp',
-		TradeType::APP      => 'app',
-		TradeType::WAP      => 'wap',
+		TradeTypeEnum::NATIVE   => 'scan',
+		TradeTypeEnum::SCAN     => 'pos',
+		TradeTypeEnum::JSAPI    => 'mp',
+		TradeTypeEnum::MINI_APP => 'miniapp',
+		TradeTypeEnum::APP      => 'app',
+		TradeTypeEnum::WAP      => 'wap',
 	];
 	
 	/**
 	 * @var string[]
 	 */
 	protected $alipayUnifiedOrderMap = [
-		TradeType::NATIVE   => 'scan',
-		TradeType::SCAN     => 'pos',
-		TradeType::JSAPI    => 'mini',
-		TradeType::MINI_APP => 'mini',
-		TradeType::APP      => 'app',
-		TradeType::WAP      => 'wap',
+		TradeTypeEnum::NATIVE   => 'scan',
+		TradeTypeEnum::SCAN     => 'pos',
+		TradeTypeEnum::JSAPI    => 'mini',
+		TradeTypeEnum::MINI_APP => 'mini',
+		TradeTypeEnum::APP      => 'app',
+		TradeTypeEnum::WAP      => 'wap',
 	];
 	
 	/**
@@ -147,7 +147,7 @@ class EasyPayAdapter extends AbstractAdapter{
 		
 		if('unifiedOrder' == $name){
 			/** @var \Xin\Payment\Bus\Base\UnifiedOrderInput $input */
-			if($channel === PayChannel::ALIPAY){
+			if($channel === PayChannelEnum::ALIPAY){
 				$tradeType = $input->getTradeType();
 				return $this->alipayUnifiedOrderMap[$tradeType];
 			}else{

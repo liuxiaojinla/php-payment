@@ -7,6 +7,6 @@
 
 namespace Xin\Payment\Exceptions;
 
-class InvalidConfigException extends Exception{
+class InvalidConfigException extends PaymentException{
 
 }

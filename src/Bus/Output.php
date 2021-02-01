@@ -10,7 +10,6 @@
 namespace Xin\Payment\Bus;
 
 use Psr\Http\Message\ResponseInterface;
-use Xin\Payment\Exceptions\InvalidArgumentException;
 
 /**
  * 请求结果
@@ -34,23 +33,23 @@ abstract class Output extends Attribute{
 	/**
 	 * @var mixed
 	 */
-	protected $raw;
+	protected $response;
 	
 	/**
 	 * PaymentResult constructor.
 	 *
-	 * @param array                       $data
-	 * @param \Xin\Payment\Bus\Input|null $input
-	 * @param mixed                       $config
-	 * @param null                        $raw
+	 * @param array      $data
+	 * @param Input|null $input
+	 * @param mixed      $config
+	 * @param mixed      $response
 	 */
-	public function __construct(array $data = [], Input $input = null, $config = [], $raw = null){
+	public function __construct(array $data = [], Input $input = null, $config = [], $response = null){
 		parent::__construct($data);
-		$this->input = $input;
-		$this->config = $config;
-		$this->raw = $raw;
 		
+		$this->input = $input;
 		$this->channel = $input->getChannel();
+		$this->config = $config;
+		$this->response = $response;
 	}
 	
 	/**
@@ -72,8 +71,8 @@ abstract class Output extends Attribute{
 	/**
 	 * @return mixed
 	 */
-	public function getRaw(){
-		return $this->raw;
+	public function getResponse(){
+		return $this->response;
 	}
 	
 	/**
@@ -102,11 +101,10 @@ abstract class Output extends Attribute{
 	 * @param \Xin\Payment\Bus\Input|null $input
 	 * @param array                       $config
 	 * @return static
-	 * @throws \Xin\Payment\Exceptions\InvalidArgumentException
 	 */
 	public static function fromXML($xml, Input $input = null, $config = []){
 		if(!$xml){
-			throw new InvalidArgumentException("xml数据异常！");
+			throw new \InvalidArgumentException("xml数据异常！");
 		}
 		
 		//将XML转为array
@@ -114,19 +112,7 @@ abstract class Output extends Attribute{
 		libxml_disable_entity_loader(true);
 		$data = json_decode(json_encode(simplexml_load_string($xml, 'SimpleXMLElement', LIBXML_NOCDATA)), true);
 		
-		return new static($data, $input, $config, $xml);
-	}
-	
-	/**
-	 * 使用stdClass实例构建
-	 *
-	 * @param \stdClass                   $stdClass
-	 * @param \Xin\Payment\Bus\Input|null $input
-	 * @param array                       $config
-	 * @return static
-	 */
-	public static function formStdClass($stdClass, Input $input = null, $config = []){
-		return new static((array)$stdClass, $input, $config, $stdClass);
+		return self::make($data, $input, $config, $xml);
 	}
 	
 	/**
@@ -136,6 +122,31 @@ abstract class Output extends Attribute{
 	 * @return static
 	 */
 	public static function formResponse(ResponseInterface $response, Input $input = null, $config = []){
-		return new static(json_decode($response->getBody()->getContents(), true), $input, $config, $response);
+		return self::make(
+			json_decode($response->getBody()->getContents(), true),
+			$input, $config, $response
+		);
+	}
+	
+	/**
+	 * 生成输出类
+	 *
+	 * @param array                  $data
+	 * @param \Xin\Payment\Bus\Input $input
+	 * @param array                  $config
+	 * @param null                   $response
+	 * @return false|mixed
+	 */
+	public static function make($data, Input $input, $config = [], $response = null){
+		$outputClass = substr(get_class($input), 0, -5)."Output";
+		if(!class_exists($outputClass)){
+			return $data;
+		}
+		
+		if(method_exists($outputClass, '__make')){
+			return call_user_func([$outputClass, '__make'], $data, $input, $config, $response);
+		}
+		
+		return new $outputClass($data, $input, $config, $response);
 	}
 }

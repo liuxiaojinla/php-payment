@@ -8,7 +8,7 @@
  */
 namespace Xin\Payment\Bus;
 
-interface TradeType{
+final class TradeTypeEnum{
 	
 	/**
 	 * 原生支付二维码

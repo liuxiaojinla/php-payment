@@ -25,8 +25,7 @@
 		"ext-ctype":"*",
 		"ext-mbstring":"*",
 		"ext-openssl":"*",
-		"pimple/pimple":"^3.2",
-		"symfony/event-dispatcher":"^4.4"
+		"pimple/pimple":"^3.2"
 	},
 	"require-dev":{
 		"yansongda/pay":"^2.10"

@@ -8,7 +8,7 @@
 namespace Xin\Payment\Adapters;
 
 use Xin\Payment\Bus\Input;
-use Xin\Payment\Kernel\Support\Arr;
+use Xin\Payment\Support\Arr;
 
 abstract class AbstractAdapter{
 	

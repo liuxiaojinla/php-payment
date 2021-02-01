@@ -7,6 +7,6 @@
 
 namespace Xin\Payment\Exceptions;
 
-class DecryptException extends Exception{
+class DecryptException extends PaymentException{
 
 }

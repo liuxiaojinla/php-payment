@@ -8,7 +8,7 @@
  */
 namespace Xin\Payment\Exceptions;
 
-class GatewayException extends Exception{
+class GatewayException extends PaymentException{
 	
 	/**
 	 * @param string       $message
