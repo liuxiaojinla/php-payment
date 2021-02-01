@@ -9,7 +9,7 @@ $orderSn = time();
 var_dump($orderSn);
 
 $input = new RefundInput();
-$input->setOutTradeNo('1561279171');
+$input->setOutTradeNo('1612173980');
 $input->setOutRefundNo($orderSn);
 $input->setTotalFee(100);
 $input->setRefundFee(100);

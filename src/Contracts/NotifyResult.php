@@ -5,7 +5,7 @@
  * @author: 晋<657306123@qq.com>
  */
 
-namespace Xin\Payment\Kernel\Contracts;
+namespace Xin\Payment\Contracts;
 
 interface NotifyResult{
 	

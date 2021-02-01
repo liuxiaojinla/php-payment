@@ -11,7 +11,7 @@ namespace Xin\Payment\Kernel\Support;
 use ArrayAccess;
 use ArrayIterator;
 use IteratorAggregate;
-use Xin\Payment\Kernel\Contracts\Arrayable;
+use Xin\Payment\Contracts\Arrayable;
 
 /**
  * Class ArrayAccessible.

@@ -5,7 +5,7 @@
  * @author: 晋<657306123@qq.com>
  */
 
-namespace Xin\Payment\Kernel\Support;
+namespace Xin\Payment\Support;
 
 class Security{
 	

@@ -7,6 +7,7 @@
 
 namespace Xin\Payment;
 
+use Psr\Http\Message\ResponseInterface;
 use Xin\Payment\Bus\Input;
 use Xin\Payment\Bus\Output;
 use Xin\Payment\Bus\PayChannelEnum;
@@ -41,12 +42,36 @@ class Payment{
 		],
 		
 		'channels' => [
-			'wxpay' => [
-			
+			// 微信支付渠道
+			'wechat' => [
+				'app_id'     => '',
+				'mch_id'     => '',
+				'key'        => '',
+				'cert_path'  => '',
+				'key_path'   => '',
+				'notify_url' => '',
+				'log'        => [
+					// optional
+					'file'     => './logs/wxpay.log',
+					'level'    => 'info', // 建议生产环境等级调整为 info，开发环境为 debug
+					'type'     => 'daily', // optional, 可选 daily.
+					'max_file' => 30, // optional, 当 type 为 daily 时有效，默认 30 天
+				],
 			],
 			
+			// 支付宝支付渠道
 			'alipay' => [
-			
+				'app_id'         => '',
+				'ali_public_key' => '',
+				// 加密方式： **RSA2**
+				'private_key'    => '',
+				'log'            => [
+					// optional
+					'file'     => './logs/alipay.log',
+					'level'    => 'info', // 建议生产环境等级调整为 info，开发环境为 debug
+					'type'     => 'daily', // optional, 可选 daily.
+					'max_file' => 30, // optional, 当 type 为 daily 时有效，默认 30 天
+				],
 			],
 		],
 	];
@@ -142,7 +167,7 @@ class Payment{
 	 *
 	 * @param string $name
 	 * @param string $channel
-	 * @return \Xin\Payment\Kernel\Contracts\Converter
+	 * @return \Xin\Payment\Contracts\Converter
 	 */
 	protected function resolveConverter($name, $channel){
 		if(!isset($this->converters[$channel])){
@@ -161,7 +186,7 @@ class Payment{
 	 *
 	 * @param string $channel
 	 * @param string $name
-	 * @return \Xin\Payment\Kernel\Contracts\Converter
+	 * @return \Xin\Payment\Contracts\Converter
 	 */
 	protected function createConverter($channel, $name){
 		$channelPath = Str::studly($channel);
@@ -188,20 +213,24 @@ class Payment{
 		}
 		
 		$channel = $input->getChannel();
-		
 		$converter = $this->resolveConverter($channel, $name);
 		if($converter){
 			$arguments[0] = $converter->convertInput($input);
 		}
 		
+		array_unshift($arguments, $name);
 		$result = call_user_func_array([
-			$this->adapter(), $name,
+			$this->adapter(), 'execute',
 		], $arguments);
 		
 		if($converter){
 			$output = $converter->convertOutput($result, $input, $this->config);
 		}else{
-			$output = Output::formResponse($result, $input, $this->config);
+			if($result instanceof ResponseInterface){
+				$output = Output::formResponse($result, $input, $this->config);
+			}else{
+				$output = Output::make($result, $input, $this->config);
+			}
 		}
 		
 		return $output;

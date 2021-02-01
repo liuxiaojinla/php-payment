@@ -10,6 +10,7 @@
 namespace Xin\Payment\Bus;
 
 use Psr\Http\Message\ResponseInterface;
+use Xin\Payment\Support\XML;
 
 /**
  * 请求结果
@@ -107,10 +108,7 @@ abstract class Output extends Attribute{
 			throw new \InvalidArgumentException("xml数据异常！");
 		}
 		
-		//将XML转为array
-		//禁止引用外部xml实体
-		libxml_disable_entity_loader(true);
-		$data = json_decode(json_encode(simplexml_load_string($xml, 'SimpleXMLElement', LIBXML_NOCDATA)), true);
+		$data = XML::parse($xml);
 		
 		return self::make($data, $input, $config, $xml);
 	}

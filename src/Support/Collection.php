@@ -6,7 +6,7 @@
  * @date: 2019/6/3 16:10
  */
 
-namespace Xin\Payment\Kernel\Support;
+namespace Xin\Payment\Support;
 
 use ArrayAccess;
 use ArrayIterator;
@@ -14,7 +14,7 @@ use Countable;
 use IteratorAggregate;
 use JsonSerializable;
 use Serializable;
-use Xin\Payment\Kernel\Contracts\Arrayable;
+use Xin\Payment\Contracts\Arrayable;
 
 /**
  * Class Collection.

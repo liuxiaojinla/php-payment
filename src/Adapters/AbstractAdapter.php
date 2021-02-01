@@ -8,9 +8,10 @@
 namespace Xin\Payment\Adapters;
 
 use Xin\Payment\Bus\Input;
+use Xin\Payment\Contracts\Adapter;
 use Xin\Payment\Support\Arr;
 
-abstract class AbstractAdapter{
+abstract class AbstractAdapter implements Adapter{
 	
 	/**
 	 * @var array
@@ -30,7 +31,12 @@ abstract class AbstractAdapter{
 	/**
 	 * @var array
 	 */
-	protected $realMethodMap = [];
+	protected $realCommonMethodMap = [];
+	
+	/**
+	 * @var array
+	 */
+	protected $realMethodMaps = [];
 	
 	/**
 	 * AbstractAdapter constructor.
@@ -53,6 +59,30 @@ abstract class AbstractAdapter{
 	}
 	
 	/**
+	 * 选择并解析支付网关器
+	 *
+	 * @param string $gateway
+	 */
+	public function shouldUse($gateway){
+		$this->gateway = $gateway;
+		$this->resolveGateway($gateway);
+	}
+	
+	/**
+	 * 获取微信支付器实例
+	 */
+	public function shouldUseWechat(){
+		$this->shouldUse('wechat');
+	}
+	
+	/**
+	 * 获取支付宝支付器实例
+	 */
+	public function shouldUseAlipay(){
+		$this->shouldUse('alipay');
+	}
+	
+	/**
 	 * 获取支付器实例
 	 *
 	 * @param string|null $gateway
@@ -60,7 +90,6 @@ abstract class AbstractAdapter{
 	 */
 	public function gateway($gateway = null){
 		$gateway = $gateway ? $gateway : $this->gateway;
-		
 		return $this->resolveGateway($gateway);
 	}
 	
@@ -87,63 +116,29 @@ abstract class AbstractAdapter{
 	abstract protected function createGateway($gateway);
 	
 	/**
-	 * 选择并解析支付网关器
-	 *
-	 * @param string $gateway
-	 */
-	public function shouldUse($gateway){
-		$this->gateway = $gateway;
-		
-		$this->resolveGateway($gateway);
-	}
-	
-	/**
-	 * 获取微信支付器实例
-	 *
-	 * @return $this
-	 */
-	public function useWechat(){
-		$this->shouldUse('wechat');
-		
-		return $this->gateway();
-	}
-	
-	/**
-	 * 获取支付宝支付器实例
-	 *
-	 * @return $this
-	 */
-	public function useAlipay(){
-		$this->shouldUse('alipay');
-		
-		return $this->gateway();
-	}
-	
-	/**
 	 * 解析入口参数
 	 *
-	 * @param string $name
-	 * @param array  $arguments
+	 * @param string                 $channel
+	 * @param string                 $action
+	 * @param \Xin\Payment\Bus\Input $input
+	 * @param array                  $arguments
 	 * @return mixed
 	 */
-	protected function parseInput($name, array $arguments){
-		$input = isset($arguments[0]) ? $arguments[0] : null;
-		if($input instanceof Input){
-			$arguments[0] = $input->toArray();
-		}
-		
+	protected function parseArguments($channel, $action, Input $input, array $arguments){
+		array_unshift($arguments, $input->toArray());
 		return $arguments;
 	}
 	
 	/**
 	 * 解析输出数据
 	 *
-	 * @param string $name
+	 * @param string $channel
+	 * @param string $action
 	 * @param mixed  $result
 	 * @param array  $arguments
 	 * @return mixed
 	 */
-	protected function parseOutput($name, $result, array $arguments){
+	protected function parseOutput($channel, $action, $result, array $arguments){
 		return $result;
 	}
 	
@@ -156,18 +151,12 @@ abstract class AbstractAdapter{
 	}
 	
 	/**
-	 * @param string $name
-	 * @param array  $arguments
-	 * @return mixed
-	 * @throws \Exception
+	 * @inheritDoc
 	 */
-	public function __call($name, $arguments){
-		/** @var Input $input */
-		$input = isset($arguments[0]) ? $arguments[0] : null;
-		$channel = $input ? $input->getChannel() : null;
-		$realMethod = $this->realMethodName($name, $input);
-		
-		$arguments = $this->parseInput($name, $arguments);
+	public function execute($action, Input $input, ...$arguments){
+		$channel = $input ? $input->getChannel() : $this->gateway;
+		$realMethod = $this->realMethodName($channel, $action, $input);
+		$arguments = $this->parseArguments($channel, $action, $input, $arguments);
 		
 		try{
 			$result = call_user_func_array([
@@ -177,17 +166,24 @@ abstract class AbstractAdapter{
 			throw $this->castException($e);
 		}
 		
-		return $this->parseOutput($name, $result, $arguments);
+		return $this->parseOutput($channel, $action, $result, $arguments);
 	}
 	
 	/**
-	 * @param string $name
+	 * @param string $channel
+	 * @param string $action
 	 * @param Input  $input
 	 * @return mixed
 	 */
-	protected function realMethodName($name, $input){
-		return isset($this->realMethodMap[$name])
-			? $this->realMethodMap[$name] : $name;
+	protected function realMethodName($channel, $action, Input $input){
+		if(isset($this->realMethodMaps[$channel])){
+			if(isset($this->realMethodMaps[$action])){
+				return $this->realMethodMaps[$action];
+			}
+		}
+		
+		return isset($this->realCommonMethodMap[$action])
+			? $this->realCommonMethodMap[$action] : $action;
 	}
 	
 }

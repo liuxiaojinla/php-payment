@@ -6,22 +6,28 @@
  */
 namespace Xin\Payment\Adapters;
 
-use Xin\Payment\Bus\Base\RefundQueryInput;
 use Xin\Payment\Bus\Base\UnifiedOrderInput;
 use Xin\Payment\Bus\Input;
 use Xin\Payment\Bus\PayChannelEnum;
 use Xin\Payment\Bus\TradeTypeEnum;
-use Xin\Payment\Bus\Transfer\TransfersQueryInput;
 use Xin\Payment\Exceptions\BusinessException;
 use Xin\Payment\Exceptions\GatewayException;
-use Xin\Payment\Exceptions\InvalidArgumentException;
 use Xin\Payment\Exceptions\InvalidConfigException;
 use Xin\Payment\Exceptions\InvalidSignException;
 use Yansongda\Pay\Exceptions;
 use Yansongda\Pay\Pay;
-use Yansongda\Supports\Collection;
 
 class EasyPayAdapter extends AbstractAdapter{
+	
+	/**
+	 * @var array
+	 */
+	protected $realCommonMethodMap = [
+		'orderQuery'  => 'find',
+		'refundQuery' => 'find',
+		'refund'      => 'refund',
+		'closeOrder'  => 'close',
+	];
 	
 	/**
 	 * @var string[]
@@ -45,16 +51,6 @@ class EasyPayAdapter extends AbstractAdapter{
 		TradeTypeEnum::MINI_APP => 'mini',
 		TradeTypeEnum::APP      => 'app',
 		TradeTypeEnum::WAP      => 'wap',
-	];
-	
-	/**
-	 * @var string[]
-	 */
-	protected $commonMap = [
-		'orderQuery'  => 'find',
-		'refundQuery' => 'find',
-		'refund'      => 'refund',
-		'closeOrder'  => 'close',
 	];
 	
 	/**
@@ -104,23 +100,20 @@ class EasyPayAdapter extends AbstractAdapter{
 	/**
 	 * 解析入口参数
 	 *
-	 * @param string $name
-	 * @param array  $arguments
+	 * @param string                 $channel
+	 * @param string                 $action
+	 * @param \Xin\Payment\Bus\Input $input
+	 * @param array                  $arguments
 	 * @return mixed
 	 */
-	protected function parseInput($name, array $arguments){
-		$input = isset($arguments[0]) ? $arguments[0] : null;
-		if($input instanceof Input){
-			$arguments[0] = $input->toArray();
-			
-			if($input instanceof UnifiedOrderInput){
-				unset($arguments[0]['trade_type']);
-			}elseif($input instanceof RefundQueryInput){
-				$arguments[1] = 'refund';
-			}elseif($input instanceof TransfersQueryInput){
-				$arguments[1] = 'transfer';
-			}
+	protected function parseArguments($channel, $action, Input $input, array $arguments){
+		$inputArr = $input->toArray();
+		
+		if($input instanceof UnifiedOrderInput){
+			unset($inputArr['trade_type']);
 		}
+		
+		array_unshift($arguments, $inputArr);
 		
 		return $arguments;
 	}
@@ -128,24 +121,21 @@ class EasyPayAdapter extends AbstractAdapter{
 	/**
 	 * 解析输出数据
 	 *
-	 * @param string           $name
-	 * @param Collection|mixed $result
-	 * @param array            $arguments
+	 * @param string $channel
+	 * @param string $action
+	 * @param mixed  $result
+	 * @param array  $arguments
 	 * @return mixed
 	 */
-	protected function parseOutput($name, $result, array $arguments){
+	protected function parseOutput($channel, $action, $result, array $arguments){
 		return $result->all();
 	}
 	
 	/**
-	 * @param string                 $name
-	 * @param \Xin\Payment\Bus\Input $input
-	 * @return mixed|string|void
+	 * @inheritDoc
 	 */
-	protected function realMethodName($name, $input){
-		$channel = $input->getChannel();
-		
-		if('unifiedOrder' == $name){
+	protected function realMethodName($channel, $action, Input $input){
+		if('unifiedOrder' == $action){
 			/** @var \Xin\Payment\Bus\Base\UnifiedOrderInput $input */
 			if($channel === PayChannelEnum::ALIPAY){
 				$tradeType = $input->getTradeType();
@@ -156,11 +146,7 @@ class EasyPayAdapter extends AbstractAdapter{
 			}
 		}
 		
-		if(isset($this->commonMap[$name])){
-			return $this->commonMap[$name];
-		}
-		
-		return $name;
+		return parent::realMethodName($channel, $action, $input);
 	}
 	
 	/**
@@ -171,7 +157,7 @@ class EasyPayAdapter extends AbstractAdapter{
 		if($e instanceof Exceptions\InvalidSignException){
 			$e = new InvalidSignException($e->getMessage());
 		}elseif($e instanceof Exceptions\InvalidArgumentException){
-			$e = new InvalidArgumentException($e->getMessage());
+			$e = new \InvalidArgumentException($e->getMessage());
 		}elseif($e instanceof Exceptions\InvalidConfigException){
 			$e = new InvalidConfigException($e->getMessage());
 		}elseif($e instanceof Exceptions\BusinessException){
@@ -187,7 +173,6 @@ class EasyPayAdapter extends AbstractAdapter{
 				str_replace("INVALID_GATEWAY: ", "", $e->getMessage()),
 				$e->raw, $e->getCode());
 		}
-		
 		return $e;
 	}
 	
