@@ -7,7 +7,7 @@
 
 namespace Xin\Payment\Kernel;
 
-use Xin\Payment\Kernel\Support\Collection;
+use Xin\Payment\Support\Collection;
 
 /**
  * Class Config.

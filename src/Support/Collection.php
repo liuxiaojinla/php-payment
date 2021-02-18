@@ -52,7 +52,7 @@ class Collection implements ArrayAccess, Countable, IteratorAggregate, JsonSeria
 	 * Return specific items.
 	 *
 	 * @param array $keys
-	 * @return \Xin\Payment\Kernel\Support\Collection
+	 * @return \Xin\Payment\Support\Collection
 	 */
 	public function only(array $keys){
 		$return = [];
@@ -84,7 +84,7 @@ class Collection implements ArrayAccess, Countable, IteratorAggregate, JsonSeria
 	 * Merge data.
 	 *
 	 * @param Collection|array $items
-	 * @return \Xin\Payment\Kernel\Support\Collection
+	 * @return \Xin\Payment\Support\Collection
 	 */
 	public function merge($items){
 		$clone = new static($this->all());

@@ -9,8 +9,8 @@ namespace Xin\Payment;
 
 use Psr\Http\Message\ResponseInterface;
 use Xin\Payment\Bus\Input;
+use Xin\Payment\Bus\NotifyResult;
 use Xin\Payment\Bus\Output;
-use Xin\Payment\Bus\PayChannelEnum;
 use Xin\Payment\Support\Arr;
 use Xin\Payment\Support\Str;
 
@@ -114,6 +114,19 @@ class Payment{
 	public function shouldUseAdapter($name){
 		Arr::set($this->config, 'defaults.adapter', $name);
 		$this->adapter($name);
+	}
+	
+	/**
+	 * 获取异步请求结果
+	 *
+	 * @param string $channel
+	 * @return \Xin\Payment\Bus\NotifyResult
+	 */
+	public function notify($channel){
+		return new NotifyResult(
+			$channel,
+			$this->adapter()->notify()
+		);
 	}
 	
 	/**
@@ -277,14 +290,7 @@ class Payment{
 	 * @return string
 	 */
 	public static function notifyResult($channel, $errMsg = null){
-		$isSuccess = empty($errMsg);
-		$errMsg = is_array($errMsg) || is_object($errMsg) ? json_encode($errMsg, JSON_UNESCAPED_UNICODE) : $errMsg;
-		if(PayChannelEnum::ALIPAY == $channel){
-			return "";
-		}else{
-			$state = $isSuccess ? 'SUCCESS' : 'FAIL';
-			return "<xml><return_code><![CDATA[{$state}]]></return_code><return_msg><![CDATA[{$errMsg}]]></return_msg></xml>";
-		}
+		return NotifyResult::result($channel, $errMsg);
 	}
 	
 }

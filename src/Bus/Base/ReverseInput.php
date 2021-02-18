@@ -28,7 +28,7 @@ class ReverseInput extends Input{
 	 * @return string
 	 */
 	public function getTransactionId(){
-		return $this->get(['transaction_id']);
+		return $this->get('transaction_id');
 	}
 	
 }

@@ -37,4 +37,11 @@ interface Adapter{
 	 * 使用一个支付宝支付网关
 	 */
 	public function shouldUseAlipay();
+	
+	/**
+	 * 验证回调数据
+	 *
+	 * @return array
+	 */
+	public function notify();
 }

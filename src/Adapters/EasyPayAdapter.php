@@ -176,4 +176,8 @@ class EasyPayAdapter extends AbstractAdapter{
 		return $e;
 	}
 	
+	public function notify(){
+//		$this->gateway()->verify();
+		Pay::wechat()->verify();
+	}
 }

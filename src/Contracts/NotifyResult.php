@@ -10,18 +10,17 @@ namespace Xin\Payment\Contracts;
 interface NotifyResult{
 	
 	/**
-	 * 发送结果
+	 * 返回成功信息
 	 *
-	 * @param string|null $errMsg
-	 * @return void
+	 * @return string
 	 */
-	public function send($errMsg = null);
+	public function success();
 	
 	/**
-	 * 获取结果
+	 * 返回失败消息
 	 *
 	 * @param string|null $errMsg
 	 * @return string
 	 */
-	public function get($errMsg = null);
+	public function error($errMsg);
 }
