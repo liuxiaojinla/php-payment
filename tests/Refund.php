@@ -1,6 +1,6 @@
 <?php
-use Xin\Payment\Bus\Base\RefundInput;
-use Xin\Payment\Bus\PayChannelEnum;
+use  Xin\Payment\Bus\RefundInput;
+use Xin\Payment\PayChannel;
 
 require_once '../vendor/autoload.php';
 require_once './init.php';
@@ -14,7 +14,7 @@ $input->setOutRefundNo($orderSn);
 $input->setTotalFee(100);
 $input->setRefundFee(100);
 $input->setOpUserId(100);
-$input->setChannel(PayChannelEnum::WECHAT);
+$input->setChannel(PayChannel::WECHAT);
 
 $result = payment()->refund($input);
 

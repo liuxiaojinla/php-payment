@@ -15,7 +15,7 @@ interface Converter{
 	/**
 	 * 转换输入参数
 	 *
-	 * @param \Xin\Payment\Bus\Input $input
+	 * @param Input $input
 	 * @return Input
 	 */
 	public function convertInput(Input $input);
@@ -23,10 +23,10 @@ interface Converter{
 	/**
 	 * 转换输出参数
 	 *
-	 * @param array                  $output
-	 * @param \Xin\Payment\Bus\Input $input
-	 * @param array                  $config
+	 * @param array $result
+	 * @param Input $input
+	 * @param array $config
 	 * @return Result
 	 */
-	public function convertOutput($output, Input $input, $config = []);
+	public function convertResult($result, Input $input, $config = []);
 }

@@ -1,13 +1,13 @@
 <?php
-use Xin\Payment\Bus\Base\OrderQueryInput;
-use Xin\Payment\Bus\PayChannelEnum;
+use  Xin\Payment\Bus\OrderQueryInput;
+use Xin\Payment\PayChannel;
 
 require_once '../vendor/autoload.php';
 require_once './init.php';
 
 $input = new OrderQueryInput();
 $input->setOutTradeNo(1612173980);
-$input->setChannel(PayChannelEnum::WECHAT);
+$input->setChannel(PayChannel::WECHAT);
 $result = payment()->orderQuery($input);
 
 var_dump("appid:".$result->getAppid());

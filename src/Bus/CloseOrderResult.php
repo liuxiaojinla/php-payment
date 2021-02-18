@@ -7,9 +7,7 @@
  * @author BD<657306123@qq.com>
  */
 
-namespace Xin\Payment\Bus\Base;
-
-use Xin\Payment\Bus\Result;
+namespace Xin\Payment\Bus;
 
 /**
  * 关闭订单结果

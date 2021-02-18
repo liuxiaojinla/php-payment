@@ -6,9 +6,9 @@
  * @license http://www.apache.org/licenses/LICENSE-2.0
  * @author BD<657306123@qq.com>
  */
-namespace Xin\Payment\Bus;
+namespace Xin\Payment;
 
-final class TradeTypeEnum{
+final class TradeType{
 	
 	/**
 	 * 原生支付二维码

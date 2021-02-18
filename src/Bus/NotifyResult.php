@@ -38,7 +38,7 @@ class NotifyResult extends Collection implements NotifyResultContract{
 	public static function result($channel, $errMsg = null){
 		$isSuccess = empty($errMsg);
 		$errMsg = is_array($errMsg) || is_object($errMsg) ? json_encode($errMsg, JSON_UNESCAPED_UNICODE) : $errMsg;
-		if(PayChannelEnum::ALIPAY == $channel){
+		if(PayChannel::ALIPAY == $channel){
 			return $errMsg ? $errMsg : '';
 		}else{
 			$state = $isSuccess ? 'SUCCESS' : 'FAIL';

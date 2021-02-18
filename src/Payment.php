@@ -10,21 +10,21 @@ namespace Xin\Payment;
 use Psr\Http\Message\ResponseInterface;
 use Xin\Payment\Bus\Input;
 use Xin\Payment\Bus\NotifyResult;
+use Xin\Payment\Bus\RefundNotify;
 use Xin\Payment\Bus\Result;
+use Xin\Payment\Bus\UnifiedOrderNotify;
 use Xin\Payment\Support\Arr;
 use Xin\Payment\Support\Str;
 
 /**
  * Class Factory.
  * @method static $this makeEasyPay(array $config)
- * @method \Xin\Payment\Bus\Base\UnifiedOrderResult unifiedOrder(\Xin\Payment\Bus\Base\UnifiedOrderInput $input)
- * @method \Xin\Payment\Bus\Base\UnifiedOrderNotify unifiedOrderNotify($channel)
- * @method \Xin\Payment\Bus\Base\OrderQueryResult orderQuery(\Xin\Payment\Bus\Base\OrderQueryInput $input)
- * @method \Xin\Payment\Bus\Base\RefundResult refund(\Xin\Payment\Bus\Base\RefundInput $input)
- * @method \Xin\Payment\Bus\Base\RefundNotify refundNotify($channel)
- * @method \Xin\Payment\Bus\Base\RefundQueryResult refundQuery(\Xin\Payment\Bus\Base\RefundQueryInput $input)
- * @method \Xin\Payment\Bus\Base\CloseOrderResult closeOrder(\Xin\Payment\Bus\Base\CloseOrderInput $input)
- * @method \Xin\Payment\Bus\Base\ReverseResult reverse(\Xin\Payment\Bus\Base\ReverseInput $input)
+ * @method \Xin\Payment\Bus\UnifiedOrderResult unifiedOrder(\ Xin\Payment\Bus\UnifiedOrderInput $input)
+ * @method \Xin\Payment\Bus\OrderQueryResult orderQuery(\ Xin\Payment\Bus\OrderQueryInput $input)
+ * @method \Xin\Payment\Bus\RefundResult refund(\ Xin\Payment\Bus\RefundInput $input)
+ * @method \Xin\Payment\Bus\RefundQueryResult refundQuery(\ Xin\Payment\Bus\RefundQueryInput $input)
+ * @method \Xin\Payment\Bus\CloseOrderResult closeOrder(\ Xin\Payment\Bus\CloseOrderInput $input)
+ * @method \Xin\Payment\Bus\ReverseResult reverse(\ Xin\Payment\Bus\ReverseInput $input)
  * @method \Xin\Payment\Bus\Transfer\TransfersResult transfer(\Xin\Payment\Bus\Transfer\TransfersResult $input)
  * @method \Xin\Payment\Bus\Transfer\TransfersQueryResult transferQuery(\Xin\Payment\Bus\Transfer\TransfersQueryResult $input)
  */
@@ -119,7 +119,7 @@ class Payment{
 	}
 	
 	/**
-	 * 获取异步请求结果
+	 * 获取异步回调结果
 	 *
 	 * @param string $channel
 	 * @return \Xin\Payment\Bus\NotifyResult
@@ -128,6 +128,32 @@ class Payment{
 		return new NotifyResult(
 			$channel,
 			$this->adapter()->notify()
+		);
+	}
+	
+	/**
+	 * 获取统一下单异步回调结果
+	 *
+	 * @param string $channel
+	 * @return \ Xin\Payment\Bus\UnifiedOrderNotify
+	 */
+	public function unifiedOrderNotify($channel){
+		return new UnifiedOrderNotify(
+			$channel,
+			$this->adapter()->notify()
+		);
+	}
+	
+	/**
+	 * 获取退款异步回调结果
+	 *
+	 * @param string $channel
+	 * @return \ Xin\Payment\Bus\RefundNotify
+	 */
+	public function refundNotify($channel){
+		return new RefundNotify(
+			$channel,
+			$this->adapter()->notify(true)
 		);
 	}
 	
@@ -239,7 +265,7 @@ class Payment{
 		], $arguments);
 		
 		if($converter){
-			$output = $converter->convertOutput($result, $input, $this->config);
+			$output = $converter->convertResult($result, $input, $this->config);
 		}else{
 			if($result instanceof ResponseInterface){
 				$output = Result::formResponse($result, $input, $this->config);

@@ -7,27 +7,25 @@
  * @author BD<657306123@qq.com>
  */
 
-namespace Xin\Payment\Bus\Base;
-
-use Xin\Payment\Bus\Result;
+namespace Xin\Payment\Bus;
 
 /**
  * 统一下单结果
  *
- * @property-read string                                  appId
- * @property-read string                                  timeStamp
- * @property-read string                                  timestamp
- * @property-read string                                  nonceStr
- * @property-read string                                  package
- * @property-read string                                  signType
- * @property-read string                                  paySign
+ * @property-read string                              appId
+ * @property-read string                              timeStamp
+ * @property-read string                              timestamp
+ * @property-read string                              nonceStr
+ * @property-read string                              package
+ * @property-read string                              signType
+ * @property-read string                              paySign
  * @method string getNonceStr()
  * @method bool hasNonceStr()
  * @method string getPrepayId()
  * @method bool hasPrepayId()
  * @method string getCodeUrl()
  * @method bool hasCodeUrl()
- * @property-read \Xin\Payment\Bus\Base\UnifiedOrderInput $input
+ * @property-read \ Xin\Payment\Bus\UnifiedOrderInput $input
  */
 class UnifiedOrderResult extends Result{
 	

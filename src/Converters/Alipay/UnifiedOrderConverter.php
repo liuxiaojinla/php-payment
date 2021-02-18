@@ -6,18 +6,18 @@
  */
 namespace Xin\Payment\Converters\Alipay;
 
-use Xin\Payment\Bus\Base\UnifiedOrderResult;
+use  Xin\Payment\Bus\UnifiedOrderResult;
 use Xin\Payment\Bus\Input;
+use Xin\Payment\Bus\Result;
 use Xin\Payment\Contracts\Converter;
 
 class UnifiedOrderConverter implements Converter{
 	
 	/**
-	 * @param \Xin\Payment\Bus\Input $input
-	 * @return \Xin\Payment\Bus\Input
+	 * @param Input $input
+	 * @return Input
 	 */
 	public function convertInput(Input $input){
-		/** @var \Xin\Payment\Bus\Base\UnifiedOrderInput $input */
 		return $input->withTransformKeys([
 			'openid'       => 'buyer_id',
 			'out_trade_no' => 'tradeNO',
@@ -25,12 +25,12 @@ class UnifiedOrderConverter implements Converter{
 	}
 	
 	/**
-	 * @param array                  $output
-	 * @param \Xin\Payment\Bus\Input $input
-	 * @param array                  $config
-	 * @return \Xin\Payment\Bus\Base\UnifiedOrderResult|\Xin\Payment\Bus\Result
+	 * @param array $result
+	 * @param Input $input
+	 * @param array $config
+	 * @return UnifiedOrderResult|Result
 	 */
-	public function convertOutput($output, Input $input, $config = []){
-		return new UnifiedOrderResult($output, $input, $config, $output);
+	public function convertResult($result, Input $input, $config = []){
+		return new UnifiedOrderResult($result, $input, $config, $result);
 	}
 }

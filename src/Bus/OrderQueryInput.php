@@ -7,12 +7,10 @@
  * @author BD<657306123@qq.com>
  */
 
-namespace Xin\Payment\Bus\Base;
-
-use Xin\Payment\Bus\Input;
+namespace Xin\Payment\Bus;
 
 /**
- * 关闭订单
+ * 订单查询
  * @method string getOutTradeNo() 获取订单号
  * @method void setOutTradeNo($outTradeNo) 设置订单号
  * @method bool hasOutTradeNo() 是否设置订单号
@@ -20,6 +18,6 @@ use Xin\Payment\Bus\Input;
  * @method void setTransactionId($transactionId) 设置交易流水号
  * @method bool hasTransactionId() 是否设置交易流水号
  */
-class CloseOrderInput extends Input{
+class OrderQueryInput extends Input{
 
 }

@@ -6,20 +6,13 @@
  * @license http://www.apache.org/licenses/LICENSE-2.0
  * @author BD<657306123@qq.com>
  */
+
 namespace Xin\Payment\Bus;
 
 /**
- * 支付渠道
+ * 撤销订单结果
+ * @method string getOutTradeNo() 获取订单号
  */
-final class PayChannelEnum{
-	
-	/**
-	 * 微信
-	 */
-	const WECHAT = 'wechat';
-	
-	/**
-	 * 支付宝
-	 */
-	const ALIPAY = 'alipay';
+class ReverseResult extends Result{
+
 }

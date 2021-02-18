@@ -4,12 +4,12 @@
  *
  * @author: 晋<657306123@qq.com>
  */
-use Xin\Payment\Bus\PayChannelEnum;
+use Xin\Payment\PayChannel;
 
 require_once '../vendor/autoload.php';
 $payment = require_once './init.php';
 
-$notify = payment()->notify(PayChannelEnum::WECHAT);
+$notify = payment()->unifiedOrderNotify(PayChannel::WECHAT);
 if($notify->isOk()){
 	echo $notify->success();
 }

@@ -1,8 +1,7 @@
 <?php
-use Xin\Payment\Bus\Base\UnifiedOrderInput;
-use Xin\Payment\Bus\PayChannelEnum;
-use Xin\Payment\Bus\TradeTypeEnum;
-use Xin\Payment\Payment;
+use Xin\Payment\Bus\UnifiedOrderInput;
+use Xin\Payment\PayChannel;
+use Xin\Payment\TradeType;
 
 require_once '../vendor/autoload.php';
 $payment = require_once './init.php';
@@ -17,12 +16,12 @@ $input->setTotalFee(100);
 $input->setNotifyUrl('https://www.baidu.com');
 $input->setOpenid('oJyI75BLFnrl8xYAbCNfc9tNKaOw');
 
-$input->setChannel(PayChannelEnum::WECHAT);
+$input->setChannel(PayChannel::WECHAT);
 //$input->setChannel(PayChannel::ALIPAY);
 
-$input->setTradeType(TradeTypeEnum::JSAPI);
-$input->setTradeType(TradeTypeEnum::NATIVE);
-$input->setTradeType(TradeTypeEnum::MINI_APP);
+$input->setTradeType(TradeType::JSAPI);
+$input->setTradeType(TradeType::NATIVE);
+$input->setTradeType(TradeType::MINI_APP);
 //$input->setTradeType(TradeType::APP);
 //$input->setTradeType(TradeType::WAP);
 //$input->setTradeType(TradeType::SCAN);
@@ -30,7 +29,7 @@ $input->setTradeType(TradeTypeEnum::MINI_APP);
 
 $result = payment()->unifiedOrder($input);
 
-if($result->getTradeType() === TradeTypeEnum::JSAPI || TradeTypeEnum::MINI_APP === $result->getTradeType()){
+if($result->getTradeType() === TradeType::JSAPI || TradeType::MINI_APP === $result->getTradeType()){
 	var_dump("appid:".$result->appId);
 	var_dump($result->toArray());
 }else{
