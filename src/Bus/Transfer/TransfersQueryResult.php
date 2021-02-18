@@ -8,11 +8,11 @@
 
 namespace Xin\Payment\Bus\Transfer;
 
-use Xin\Payment\Bus\Output;
+use Xin\Payment\Bus\Result;
 
 /**
  * Class TransfersQueryOutput
  */
-class TransfersQueryOutput extends Output{
+class TransfersQueryResult extends Result{
 
 }

@@ -21,7 +21,6 @@ use Xin\Payment\Bus\Input;
  */
 class ReverseInput extends Input{
 	
-	
 	/**
 	 * 获取交易流水号
 	 *

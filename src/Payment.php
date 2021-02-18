@@ -10,21 +10,23 @@ namespace Xin\Payment;
 use Psr\Http\Message\ResponseInterface;
 use Xin\Payment\Bus\Input;
 use Xin\Payment\Bus\NotifyResult;
-use Xin\Payment\Bus\Output;
+use Xin\Payment\Bus\Result;
 use Xin\Payment\Support\Arr;
 use Xin\Payment\Support\Str;
 
 /**
  * Class Factory.
  * @method static $this makeEasyPay(array $config)
- * @method \Xin\Payment\Bus\Base\UnifiedOrderOutput unifiedOrder(\Xin\Payment\Bus\Base\UnifiedOrderInput $input)
- * @method \Xin\Payment\Bus\Base\OrderQueryOutput orderQuery(\Xin\Payment\Bus\Base\OrderQueryInput $input)
- * @method \Xin\Payment\Bus\Base\RefundOutput refund(\Xin\Payment\Bus\Base\RefundInput $input)
- * @method \Xin\Payment\Bus\Base\RefundQueryOutput refundQuery(\Xin\Payment\Bus\Base\RefundQueryInput $input)
- * @method \Xin\Payment\Bus\Base\CloseOrderOutput closeOrder(\Xin\Payment\Bus\Base\CloseOrderInput $input)
- * @method \Xin\Payment\Bus\Base\ReverseOutput reverse(\Xin\Payment\Bus\Base\ReverseInput $input)
- * @method \Xin\Payment\Bus\Transfer\TransfersOutput transfer(\Xin\Payment\Bus\Transfer\TransfersOutput $input)
- * @method \Xin\Payment\Bus\Transfer\TransfersQueryOutput transferQuery(\Xin\Payment\Bus\Transfer\TransfersQueryOutput $input)
+ * @method \Xin\Payment\Bus\Base\UnifiedOrderResult unifiedOrder(\Xin\Payment\Bus\Base\UnifiedOrderInput $input)
+ * @method \Xin\Payment\Bus\Base\UnifiedOrderNotify unifiedOrderNotify($channel)
+ * @method \Xin\Payment\Bus\Base\OrderQueryResult orderQuery(\Xin\Payment\Bus\Base\OrderQueryInput $input)
+ * @method \Xin\Payment\Bus\Base\RefundResult refund(\Xin\Payment\Bus\Base\RefundInput $input)
+ * @method \Xin\Payment\Bus\Base\RefundNotify refundNotify($channel)
+ * @method \Xin\Payment\Bus\Base\RefundQueryResult refundQuery(\Xin\Payment\Bus\Base\RefundQueryInput $input)
+ * @method \Xin\Payment\Bus\Base\CloseOrderResult closeOrder(\Xin\Payment\Bus\Base\CloseOrderInput $input)
+ * @method \Xin\Payment\Bus\Base\ReverseResult reverse(\Xin\Payment\Bus\Base\ReverseInput $input)
+ * @method \Xin\Payment\Bus\Transfer\TransfersResult transfer(\Xin\Payment\Bus\Transfer\TransfersResult $input)
+ * @method \Xin\Payment\Bus\Transfer\TransfersQueryResult transferQuery(\Xin\Payment\Bus\Transfer\TransfersQueryResult $input)
  */
 class Payment{
 	
@@ -240,9 +242,9 @@ class Payment{
 			$output = $converter->convertOutput($result, $input, $this->config);
 		}else{
 			if($result instanceof ResponseInterface){
-				$output = Output::formResponse($result, $input, $this->config);
+				$output = Result::formResponse($result, $input, $this->config);
 			}else{
-				$output = Output::make($result, $input, $this->config);
+				$output = Result::make($result, $input, $this->config);
 			}
 		}
 		

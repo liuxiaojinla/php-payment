@@ -9,12 +9,16 @@
 
 namespace Xin\Payment\Bus\Base;
 
-use Xin\Payment\Bus\Output;
+use Xin\Payment\Bus\Result;
 
 /**
- * 撤销订单结果
+ * 申请退款结果
  * @method string getOutTradeNo() 获取订单号
+ * @method string getTransactionId() 获取设置交易流水号
+ * @method string getTotalFee() 获取订单金额
+ * @method int getRefundFee() 获取订单退款金额
+ * @method int getOpUserId() 获取操作管理员ID
  */
-class ReverseOutput extends Output{
+class RefundResult extends Result{
 
 }

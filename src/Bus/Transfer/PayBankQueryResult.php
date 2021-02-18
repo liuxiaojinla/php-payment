@@ -6,13 +6,11 @@
  * @date: 2019/11/27 11:22
  */
 
-namespace Xin\Payment\Bus\Transfer;
-
-use Xin\Payment\Bus\Output;
+namespace Xin\Payment\Bus;
 
 /**
- * Class TransfersOutput
+ * Class PayBankQueryOutput
  */
-class TransfersOutput extends Output{
+class PayBankQueryResult extends Result{
 
 }

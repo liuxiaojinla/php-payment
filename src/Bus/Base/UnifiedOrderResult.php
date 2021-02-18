@@ -9,7 +9,7 @@
 
 namespace Xin\Payment\Bus\Base;
 
-use Xin\Payment\Bus\Output;
+use Xin\Payment\Bus\Result;
 
 /**
  * 统一下单结果
@@ -29,7 +29,7 @@ use Xin\Payment\Bus\Output;
  * @method bool hasCodeUrl()
  * @property-read \Xin\Payment\Bus\Base\UnifiedOrderInput $input
  */
-class UnifiedOrderOutput extends Output{
+class UnifiedOrderResult extends Result{
 	
 	/**
 	 * @return string

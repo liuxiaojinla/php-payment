@@ -41,7 +41,8 @@ interface Adapter{
 	/**
 	 * 验证回调数据
 	 *
+	 * @param bool $needDecrypt 是否需要对数据进行解密
 	 * @return array
 	 */
-	public function notify();
+	public function notify($needDecrypt = false);
 }

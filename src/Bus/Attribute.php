@@ -143,6 +143,10 @@ abstract class Attribute implements \ArrayAccess, \IteratorAggregate, \JsonSeria
 		if('get' == $prefix){
 			$default = isset($arguments[0]) ? $arguments[0] : null;
 			return $this->get($key, $default);
+		}elseif('set' == $prefix){
+			return $this->set($key, $arguments[0]);
+		}elseif('has'){
+			return $this->has($key);
 		}
 		
 		throw new \BadMethodCallException("{$name}方法不存在！");

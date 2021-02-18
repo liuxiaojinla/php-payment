@@ -11,6 +11,6 @@ namespace Xin\Payment\Bus;
 /**
  * Class PayBankOutput
  */
-class PayBankOutput extends Output{
+class PayBankResult extends Result{
 
 }

@@ -59,4 +59,10 @@ class NotifyResult extends Collection implements NotifyResultContract{
 	public function error($errMsg){
 		return self::result($this->channel, $errMsg);
 	}
+	
+	/**
+	 * @inheritDoc
+	 */
+	public function isOk(){
+	}
 }

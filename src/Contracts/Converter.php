@@ -8,7 +8,7 @@
 namespace Xin\Payment\Contracts;
 
 use Xin\Payment\Bus\Input;
-use Xin\Payment\Bus\Output;
+use Xin\Payment\Bus\Result;
 
 interface Converter{
 	
@@ -26,7 +26,7 @@ interface Converter{
 	 * @param array                  $output
 	 * @param \Xin\Payment\Bus\Input $input
 	 * @param array                  $config
-	 * @return Output
+	 * @return Result
 	 */
 	public function convertOutput($output, Input $input, $config = []);
 }

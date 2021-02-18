@@ -9,7 +9,7 @@
 
 namespace Xin\Payment\Bus\Base;
 
-use Xin\Payment\Bus\Output;
+use Xin\Payment\Bus\Result;
 
 /**
  * 退款查询
@@ -22,6 +22,6 @@ use Xin\Payment\Bus\Output;
  * @method string getRefundId() 获取退款订单ID
  * @method bool hasRefundId() 是否设置退款订单ID
  */
-class RefundQueryOutput extends Output{
+class RefundQueryResult extends Result{
 
 }

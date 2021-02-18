@@ -9,15 +9,12 @@
 
 namespace Xin\Payment\Bus\Base;
 
-use Xin\Payment\Bus\Output;
+use Xin\Payment\Bus\Result;
 
 /**
- * 订单查询结果
+ * 撤销订单结果
  * @method string getOutTradeNo() 获取订单号
- * @method string getTotalFee() 获取订单金额
- * @method string getTradeState() 获取订单交易状态
- * @method string getTradeStateDesc() 获取订单交易状态描述
  */
-class OrderQueryOutput extends Output{
+class ReverseResult extends Result{
 
 }

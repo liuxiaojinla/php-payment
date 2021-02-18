@@ -9,12 +9,12 @@
 
 namespace Xin\Payment\Bus\Base;
 
-use Xin\Payment\Bus\Output;
+use Xin\Payment\Bus\Result;
 
 /**
  * 关闭订单结果
  * @method string getOutTradeNo() 获取订单号
  */
-class CloseOrderOutput extends Output{
+class CloseOrderResult extends Result{
 
 }

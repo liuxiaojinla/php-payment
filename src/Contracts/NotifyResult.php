@@ -23,4 +23,11 @@ interface NotifyResult{
 	 * @return string
 	 */
 	public function error($errMsg);
+	
+	/**
+	 * 是否 OK
+	 *
+	 * @return bool
+	 */
+	public function isOk();
 }

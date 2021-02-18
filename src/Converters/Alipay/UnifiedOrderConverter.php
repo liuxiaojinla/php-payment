@@ -6,9 +6,9 @@
  */
 namespace Xin\Payment\Converters\Alipay;
 
-use Xin\Payment\Bus\Base\UnifiedOrderOutput;
+use Xin\Payment\Bus\Base\UnifiedOrderResult;
 use Xin\Payment\Bus\Input;
-use Xin\Payment\Kernel\Contracts\Converter;
+use Xin\Payment\Contracts\Converter;
 
 class UnifiedOrderConverter implements Converter{
 	
@@ -28,9 +28,9 @@ class UnifiedOrderConverter implements Converter{
 	 * @param array                  $output
 	 * @param \Xin\Payment\Bus\Input $input
 	 * @param array                  $config
-	 * @return \Xin\Payment\Bus\Base\UnifiedOrderOutput|\Xin\Payment\Bus\Output
+	 * @return \Xin\Payment\Bus\Base\UnifiedOrderResult|\Xin\Payment\Bus\Result
 	 */
 	public function convertOutput($output, Input $input, $config = []){
-		return new UnifiedOrderOutput($output, $input, $config, $output);
+		return new UnifiedOrderResult($output, $input, $config, $output);
 	}
 }

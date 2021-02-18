@@ -19,7 +19,7 @@ use Xin\Payment\Support\XML;
  * @method string getMchId()
  * @method bool hasMchId()
  */
-abstract class Output extends Attribute{
+abstract class Result extends Attribute{
 	
 	/**
 	 * @var \Xin\Payment\Bus\Input
