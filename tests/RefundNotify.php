@@ -11,7 +11,7 @@ $payment = require_once './init.php';
 
 $notify = payment()->notify(PayChannel::WECHAT);
 if($notify->isOk()){
-	echo $notify->success();
+	echo $notify->replySuccess();
 }
 
-echo $notify->error('支付失败');
+echo $notify->replyError('支付失败');

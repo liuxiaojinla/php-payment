@@ -12,7 +12,7 @@ namespace Xin\Payment\Bus;
 /**
  * 请求参数
  */
-abstract class Input{
+abstract class Input implements \ArrayAccess, \IteratorAggregate, \JsonSerializable{
 
 	use Attribute;
 

@@ -179,10 +179,19 @@ class EasyPayAdapter extends AbstractAdapter{
 	/**
 	 * 异步回调结果
 	 *
-	 * @param bool $needDecrypt
+	 * @param string $channel
+	 * @param bool   $needDecrypt
 	 * @return array
+	 * @throws \Xin\Payment\Exceptions\BusinessException
+	 * @throws \Xin\Payment\Exceptions\GatewayException
+	 * @throws \Xin\Payment\Exceptions\InvalidConfigException
+	 * @throws \Xin\Payment\Exceptions\InvalidSignException
 	 */
 	public function notify($channel, $needDecrypt = false){
-		return $this->gateway($channel)->verify(null, $needDecrypt);
+		try{
+			return $this->gateway($channel)->verify(null, $needDecrypt);
+		}catch(\Exception $e){
+			throw $this->castException($e);
+		}
 	}
 }

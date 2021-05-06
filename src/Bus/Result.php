@@ -19,7 +19,7 @@ use Xin\Payment\Support\XML;
  * @method string getMchId()
  * @method bool hasMchId()
  */
-abstract class Result{
+abstract class Result implements \ArrayAccess, \IteratorAggregate, \JsonSerializable{
 
 	use Attribute;
 
@@ -139,7 +139,7 @@ abstract class Result{
 	 * @return mixed
 	 */
 	public static function make(Input $input, $data, $config = [], $raw = null){
-		$outputClass = substr(get_class($input), 0, -5)."Output";
+		$outputClass = substr(get_class($input), 0, -5)."Result";
 		if(!class_exists($outputClass)){
 			return $data;
 		}
