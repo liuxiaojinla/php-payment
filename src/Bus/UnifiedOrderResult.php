@@ -28,7 +28,7 @@ namespace Xin\Payment\Bus;
  * @property-read \ Xin\Payment\Bus\UnifiedOrderInput $input
  */
 class UnifiedOrderResult extends Result{
-	
+
 	/**
 	 * @return string
 	 */
@@ -36,7 +36,7 @@ class UnifiedOrderResult extends Result{
 		if(!$this->input){
 			return '';
 		}
-		
+
 		return $this->input->getTradeType();
 	}
 }

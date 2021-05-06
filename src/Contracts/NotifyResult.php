@@ -8,22 +8,22 @@
 namespace Xin\Payment\Contracts;
 
 interface NotifyResult{
-	
+
 	/**
 	 * 返回成功信息
 	 *
 	 * @return string
 	 */
-	public function success();
-	
+	public function replySuccess();
+
 	/**
 	 * 返回失败消息
 	 *
 	 * @param string|null $errMsg
 	 * @return string
 	 */
-	public function error($errMsg);
-	
+	public function replyError($errMsg);
+
 	/**
 	 * 是否 OK
 	 *

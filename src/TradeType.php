@@ -9,35 +9,35 @@
 namespace Xin\Payment;
 
 final class TradeType{
-	
+
 	/**
 	 * 原生支付二维码
 	 */
 	const NATIVE = 'NATIVE';
-	
+
 	/**
 	 * 付款码支付
 	 */
 	const SCAN = 'SCAN';
-	
+
 	/**
 	 * 公众号、服务号支付
 	 */
 	const JSAPI = 'JSAPI';
-	
+
 	/**
 	 * 小程序支付
 	 */
 	const MINI_APP = 'MINI_APP';
-	
+
 	/**
 	 * APP 类型
 	 */
 	const APP = 'APP';
-	
+
 	/**
 	 * 简易类型 （h5跳转）
 	 */
 	const WAP = 'MWEB';
-	
+
 }

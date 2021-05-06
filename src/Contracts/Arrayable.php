@@ -13,7 +13,7 @@ use ArrayAccess;
  * Interface Arrayable.
  */
 interface Arrayable extends ArrayAccess{
-	
+
 	/**
 	 * Get the instance as an array.
 	 *

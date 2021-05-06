@@ -11,7 +11,7 @@ use Xin\Payment\Bus\Input;
 use Xin\Payment\Bus\Result;
 
 interface Converter{
-	
+
 	/**
 	 * 转换输入参数
 	 *
@@ -19,7 +19,7 @@ interface Converter{
 	 * @return Input
 	 */
 	public function convertInput(Input $input);
-	
+
 	/**
 	 * 转换输出参数
 	 *

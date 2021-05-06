@@ -9,7 +9,7 @@
 namespace Xin\Payment\Exceptions;
 
 class InvalidSignException extends PaymentException{
-	
+
 	/**
 	 * @param string       $message
 	 * @param array|string $raw

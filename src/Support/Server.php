@@ -8,7 +8,7 @@
 namespace Xin\Payment\Kernel\Support;
 
 class Server{
-	
+
 	/**
 	 * Get client ip.
 	 *
@@ -21,10 +21,10 @@ class Server{
 			// for php-cli(phpunit etc.)
 			$ip = defined('PHPUNIT_RUNNING') ? '127.0.0.1' : gethostbyname(gethostname());
 		}
-		
+
 		return filter_var($ip, FILTER_VALIDATE_IP) ?: '127.0.0.1';
 	}
-	
+
 	/**
 	 * Get current server ip.
 	 *
@@ -39,10 +39,10 @@ class Server{
 			// for php-cli(phpunit etc.)
 			$ip = defined('PHPUNIT_RUNNING') ? '127.0.0.1' : gethostbyname(gethostname());
 		}
-		
+
 		return filter_var($ip, FILTER_VALIDATE_IP) ?: '127.0.0.1';
 	}
-	
+
 	/**
 	 * Return current url.
 	 *
@@ -50,11 +50,11 @@ class Server{
 	 */
 	public static function getCurrentUrl(){
 		$protocol = 'http://';
-		
+
 		if((!empty($_SERVER['HTTPS']) && 'off' !== $_SERVER['HTTPS']) || ($_SERVER['HTTP_X_FORWARDED_PROTO'] ?? 'http') === 'https'){
 			$protocol = 'https://';
 		}
-		
+
 		return $protocol.$_SERVER['HTTP_HOST'].$_SERVER['REQUEST_URI'];
 	}
 }

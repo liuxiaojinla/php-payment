@@ -19,63 +19,64 @@ use Xin\Payment\Support\XML;
  * @method string getMchId()
  * @method bool hasMchId()
  */
-abstract class Result extends Attribute{
-	
+abstract class Result{
+
+	use Attribute;
+
 	/**
 	 * @var \Xin\Payment\Bus\Input
 	 */
 	protected $input;
-	
+
 	/**
 	 * @var array
 	 */
 	protected $config = null;
-	
+
 	/**
 	 * @var mixed
 	 */
-	protected $response;
-	
+	protected $raw;
+
 	/**
 	 * PaymentResult constructor.
 	 *
 	 * @param array      $data
 	 * @param Input|null $input
 	 * @param mixed      $config
-	 * @param mixed      $response
+	 * @param mixed      $raw
 	 */
-	public function __construct(array $data = [], Input $input = null, $config = [], $response = null){
-		parent::__construct($data);
-		
+	public function __construct(array $data = [], Input $input = null, $config = [], $raw = null){
+		$this->data = $data;
 		$this->input = $input;
 		$this->channel = $input->getChannel();
 		$this->config = $config;
-		$this->response = $response;
+		$this->raw = $raw;
 	}
-	
+
 	/**
 	 * 获取配置
 	 *
-	 * @return \Xin\Payment\Kernel\Config
+	 * @return \Xin\Payment\Config
 	 */
 	public function getConfig(){
 		return $this->config;
 	}
-	
+
 	/**
 	 * @return \Xin\Payment\Bus\Input
 	 */
 	public function getInput(){
 		return $this->input;
 	}
-	
+
 	/**
 	 * @return mixed
 	 */
-	public function getResponse(){
-		return $this->response;
+	public function getRaw(){
+		return $this->raw;
 	}
-	
+
 	/**
 	 * @param mixed $offset
 	 * @param mixed $value
@@ -85,7 +86,7 @@ abstract class Result extends Attribute{
 			"Assignment to {$offset} is not allowed"
 		);
 	}
-	
+
 	/**
 	 * @param mixed $offset
 	 */
@@ -94,57 +95,59 @@ abstract class Result extends Attribute{
 			"Assignment to {$offset} is not allowed"
 		);
 	}
-	
+
 	/**
 	 * 使用xml字符串构建
 	 *
-	 * @param string                      $xml
 	 * @param \Xin\Payment\Bus\Input|null $input
+	 * @param string                      $xml
 	 * @param array                       $config
 	 * @return static
 	 */
-	public static function fromXML($xml, Input $input = null, $config = []){
+	public static function fromXML(Input $input, $xml, $config = []){
 		if(!$xml){
 			throw new \InvalidArgumentException("xml数据异常！");
 		}
-		
+
 		$data = XML::parse($xml);
-		
-		return self::make($data, $input, $config, $xml);
+
+		return self::make($input, $data, $config, $xml);
 	}
-	
+
 	/**
-	 * @param \Psr\Http\Message\ResponseInterface $response
 	 * @param \Xin\Payment\Bus\Input|null         $input
+	 * @param \Psr\Http\Message\ResponseInterface $response
 	 * @param array                               $config
 	 * @return static
 	 */
-	public static function formResponse(ResponseInterface $response, Input $input = null, $config = []){
+	public static function formResponse(Input $input, ResponseInterface $response, $config = []){
 		return self::make(
+			$input,
 			json_decode($response->getBody()->getContents(), true),
-			$input, $config, $response
+			$config,
+			$response
 		);
 	}
-	
+
 	/**
 	 * 生成输出类
 	 *
-	 * @param array                  $data
 	 * @param \Xin\Payment\Bus\Input $input
+	 * @param array                  $data
 	 * @param array                  $config
-	 * @param null                   $response
-	 * @return false|mixed
+	 * @param mixed                  $raw
+	 * @return mixed
 	 */
-	public static function make($data, Input $input, $config = [], $response = null){
+	public static function make(Input $input, $data, $config = [], $raw = null){
 		$outputClass = substr(get_class($input), 0, -5)."Output";
 		if(!class_exists($outputClass)){
 			return $data;
 		}
-		
+
 		if(method_exists($outputClass, '__make')){
-			return call_user_func([$outputClass, '__make'], $data, $input, $config, $response);
+			return call_user_func([$outputClass, '__make'], $data, $input, $config, $raw);
 		}
-		
-		return new $outputClass($data, $input, $config, $response);
+
+		return new $outputClass($data, $input, $config, $raw);
 	}
 }

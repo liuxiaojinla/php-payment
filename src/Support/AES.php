@@ -12,7 +12,7 @@ namespace Xin\Payment\Support;
  * Class AES.
  */
 class AES{
-	
+
 	/**
 	 * @param string $text
 	 * @param string $key
@@ -23,10 +23,10 @@ class AES{
 	public static function encrypt(string $text, string $key, string $iv, int $option = OPENSSL_RAW_DATA):string{
 		self::validateKey($key);
 		self::validateIv($iv);
-		
+
 		return openssl_encrypt($text, self::getMode($key), $key, $option, $iv);
 	}
-	
+
 	/**
 	 * @param string      $cipherText
 	 * @param string      $key
@@ -38,10 +38,10 @@ class AES{
 	public static function decrypt(string $cipherText, string $key, string $iv, int $option = OPENSSL_RAW_DATA, $method = null):string{
 		self::validateKey($key);
 		self::validateIv($iv);
-		
+
 		return openssl_decrypt($cipherText, $method ?: self::getMode($key), $key, $option, $iv);
 	}
-	
+
 	/**
 	 * @param string $key
 	 * @return string
@@ -49,7 +49,7 @@ class AES{
 	public static function getMode($key){
 		return 'aes-'.(8 * strlen($key)).'-cbc';
 	}
-	
+
 	/**
 	 * @param string $key
 	 */
@@ -58,7 +58,7 @@ class AES{
 			throw new \InvalidArgumentException(sprintf('Key length must be 16, 24, or 32 bytes; got key len (%s).', strlen($key)));
 		}
 	}
-	
+
 	/**
 	 * @param string $iv
 	 * @throws \InvalidArgumentException

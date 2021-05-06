@@ -15,27 +15,18 @@ use Xin\Payment\Support\Str;
 /**
  * 支付参数基类
  */
-abstract class Attribute implements \ArrayAccess, \IteratorAggregate, \JsonSerializable{
-	
+trait Attribute{
+
 	/**
 	 * @var string
 	 */
 	protected $channel = 'wechat';
-	
+
 	/**
 	 * @var array
 	 */
 	protected $data = [];
-	
-	/**
-	 * PaymentData constructor.
-	 *
-	 * @param array $data
-	 */
-	public function __construct(array $data = []){
-		$this->data = $data;
-	}
-	
+
 	/**
 	 * 获取支付渠道
 	 *
@@ -44,9 +35,9 @@ abstract class Attribute implements \ArrayAccess, \IteratorAggregate, \JsonSeria
 	public function getChannel(){
 		return $this->channel;
 	}
-	
+
 	/**
-	 * 检查参数是否存在
+	 * 检查给定参数是否存在
 	 *
 	 * @param array $keys
 	 * @param bool  $failException
@@ -55,17 +46,38 @@ abstract class Attribute implements \ArrayAccess, \IteratorAggregate, \JsonSeria
 	 */
 	public function check($keys, $failException = true){
 		foreach($keys as $key){
-			if(!isset($this->data[$key])){
+			if(!$this->has($key)){
 				if($failException){
 					throw new MissingParameterException("缺少参数{$key}！");
 				}
-				
+
 				return false;
 			}
 		}
 		return true;
 	}
-	
+
+	/**
+	 * 检查给定的参数任意一个是否存在
+	 *
+	 * @param array $keys
+	 * @return bool
+	 * @throws \Xin\Payment\Exceptions\MissingParameterException
+	 */
+	public function checkAny($keys, $failException = true){
+		foreach($keys as $k){
+			if($this->has($k)){
+				return true;
+			}
+		}
+
+		if($failException){
+			throw new MissingParameterException("参数".implode($keys, ',')."不能全部为空！");
+		}
+
+		return false;
+	}
+
 	/**
 	 * 获取支付签名
 	 *
@@ -74,7 +86,7 @@ abstract class Attribute implements \ArrayAccess, \IteratorAggregate, \JsonSeria
 	public function getSign(){
 		return $this->get('sign');
 	}
-	
+
 	/**
 	 * 数据签名是否存在
 	 *
@@ -83,7 +95,7 @@ abstract class Attribute implements \ArrayAccess, \IteratorAggregate, \JsonSeria
 	public function hasSign(){
 		return $this->has('sign');
 	}
-	
+
 	/**
 	 * 获取原始数据
 	 *
@@ -93,7 +105,7 @@ abstract class Attribute implements \ArrayAccess, \IteratorAggregate, \JsonSeria
 	public function toArray(array $keysMap = []){
 		return Arr::transformKeys($this->data, $keysMap);
 	}
-	
+
 	/**
 	 * 转换相关的键名并返回全新的实例
 	 *
@@ -103,10 +115,10 @@ abstract class Attribute implements \ArrayAccess, \IteratorAggregate, \JsonSeria
 	public function withTransformKeys(array $keysMap = []){
 		$clone = clone $this;
 		$clone->data = Arr::transformKeys($clone->data, $keysMap);
-		
+
 		return $clone;
 	}
-	
+
 	/**
 	 * 输出xml字符
 	 *
@@ -115,7 +127,7 @@ abstract class Attribute implements \ArrayAccess, \IteratorAggregate, \JsonSeria
 	 */
 	public function toXml(array $keysMap = []){
 		$data = $this->toArray($keysMap);
-		
+
 		$xml = "<xml>";
 		foreach($data as $key => $val){
 			if(is_numeric($val)){
@@ -125,10 +137,10 @@ abstract class Attribute implements \ArrayAccess, \IteratorAggregate, \JsonSeria
 			}
 		}
 		$xml .= "</xml>";
-		
+
 		return $xml;
 	}
-	
+
 	/**
 	 * 动态调用函数
 	 *
@@ -139,7 +151,7 @@ abstract class Attribute implements \ArrayAccess, \IteratorAggregate, \JsonSeria
 	public function __call($name, $arguments){
 		$prefix = substr($name, 0, 3);
 		$key = Str::snake(substr($name, 3));
-		
+
 		if('get' == $prefix){
 			$default = isset($arguments[0]) ? $arguments[0] : null;
 			return $this->get($key, $default);
@@ -148,10 +160,24 @@ abstract class Attribute implements \ArrayAccess, \IteratorAggregate, \JsonSeria
 		}elseif('has'){
 			return $this->has($key);
 		}
-		
+
 		throw new \BadMethodCallException("{$name}方法不存在！");
 	}
-	
+
+	/**
+	 * 配置是否存在
+	 *
+	 * @param string|array $key
+	 * @return bool
+	 */
+	public function has($key){
+		if(isset($this->data[$key])){
+			return true;
+		}
+
+		return false;
+	}
+
 	/**
 	 * 判断指定的key是否存在，并且是否为空
 	 *
@@ -161,28 +187,7 @@ abstract class Attribute implements \ArrayAccess, \IteratorAggregate, \JsonSeria
 	public function hasEmpty($key){
 		return !isset($this->data[$key]) || empty($this->data[$key]);
 	}
-	
-	/**
-	 * 配置是否存在
-	 *
-	 * @param string|array $key
-	 * @return bool
-	 */
-	public function has($key){
-		if(is_array($key)){
-			foreach($key as $k){
-				if(isset($this->data[$k])){
-					return true;
-				}
-			}
-		}else{
-			if(isset($this->data[$key])){
-				return true;
-			}
-		}
-		return false;
-	}
-	
+
 	/**
 	 * 获取配置项
 	 *
@@ -193,7 +198,7 @@ abstract class Attribute implements \ArrayAccess, \IteratorAggregate, \JsonSeria
 	public function get($key, $default = null){
 		return Arr::get($this->data, $key, $default);
 	}
-	
+
 	/**
 	 * 检查字段是否存在
 	 *
@@ -201,9 +206,9 @@ abstract class Attribute implements \ArrayAccess, \IteratorAggregate, \JsonSeria
 	 * @return bool
 	 */
 	public function __isset($name){
-		return isset($this->data[$name]);
+		return $this->has($name);
 	}
-	
+
 	/**
 	 * 获取字段
 	 *
@@ -213,7 +218,7 @@ abstract class Attribute implements \ArrayAccess, \IteratorAggregate, \JsonSeria
 	public function __get($name){
 		return $this->data[$name];
 	}
-	
+
 	/**
 	 * Retrieve an external iterator
 	 *
@@ -225,7 +230,7 @@ abstract class Attribute implements \ArrayAccess, \IteratorAggregate, \JsonSeria
 	public function getIterator(){
 		return new \ArrayIterator($this->data);
 	}
-	
+
 	/**
 	 * Whether a offset exists
 	 *
@@ -242,7 +247,7 @@ abstract class Attribute implements \ArrayAccess, \IteratorAggregate, \JsonSeria
 	public function offsetExists($offset){
 		return isset($this->data[$offset]);
 	}
-	
+
 	/**
 	 * Offset to retrieve
 	 *
@@ -256,7 +261,7 @@ abstract class Attribute implements \ArrayAccess, \IteratorAggregate, \JsonSeria
 	public function offsetGet($offset){
 		return $this->get($offset);
 	}
-	
+
 	/**
 	 * Count elements of an object
 	 *
@@ -270,7 +275,7 @@ abstract class Attribute implements \ArrayAccess, \IteratorAggregate, \JsonSeria
 	public function count(){
 		return count($this->data);
 	}
-	
+
 	/**
 	 * Specify data which should be serialized to JSON
 	 *
@@ -282,5 +287,4 @@ abstract class Attribute implements \ArrayAccess, \IteratorAggregate, \JsonSeria
 	public function jsonSerialize(){
 		return $this->toArray();
 	}
-	
 }

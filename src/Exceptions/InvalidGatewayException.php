@@ -9,7 +9,7 @@
 namespace Xin\Payment\Exceptions;
 
 class InvalidGatewayException extends PaymentException{
-	
+
 	/**
 	 * @param string       $message
 	 * @param array|string $raw

@@ -28,7 +28,7 @@ $input->setTradeType(TradeType::MINI_APP);
 //$input->setAuthCode('1354804793001231564897');
 
 $result = payment()->unifiedOrder($input);
-
+var_dump($result);
 if($result->getTradeType() === TradeType::JSAPI || TradeType::MINI_APP === $result->getTradeType()){
 	var_dump("appid:".$result->appId);
 	var_dump($result->toArray());

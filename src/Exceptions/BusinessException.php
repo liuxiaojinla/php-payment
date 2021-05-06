@@ -9,7 +9,7 @@
 namespace Xin\Payment\Exceptions;
 
 class BusinessException extends GatewayException{
-	
+
 	/**
 	 * @param string       $message
 	 * @param array|string $raw

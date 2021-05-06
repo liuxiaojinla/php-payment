@@ -18,7 +18,7 @@ namespace Xin\Payment\Bus;
  * @method bool hasTransactionId() 是否设置交易流水号
  */
 class ReverseInput extends Input{
-	
+
 	/**
 	 * 获取交易流水号
 	 *
@@ -27,5 +27,5 @@ class ReverseInput extends Input{
 	public function getTransactionId(){
 		return $this->get('transaction_id');
 	}
-	
+
 }

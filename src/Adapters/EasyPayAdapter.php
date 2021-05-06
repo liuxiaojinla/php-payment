@@ -6,19 +6,19 @@
  */
 namespace Xin\Payment\Adapters;
 
-use  Xin\Payment\Bus\UnifiedOrderInput;
 use Xin\Payment\Bus\Input;
-use Xin\Payment\PayChannel;
-use Xin\Payment\TradeType;
+use Xin\Payment\Bus\UnifiedOrderInput;
 use Xin\Payment\Exceptions\BusinessException;
 use Xin\Payment\Exceptions\GatewayException;
 use Xin\Payment\Exceptions\InvalidConfigException;
 use Xin\Payment\Exceptions\InvalidSignException;
+use Xin\Payment\PayChannel;
+use Xin\Payment\TradeType;
 use Yansongda\Pay\Exceptions;
 use Yansongda\Pay\Pay;
 
 class EasyPayAdapter extends AbstractAdapter{
-	
+
 	/**
 	 * @var array
 	 */
@@ -28,7 +28,7 @@ class EasyPayAdapter extends AbstractAdapter{
 		'refund'      => 'refund',
 		'closeOrder'  => 'close',
 	];
-	
+
 	/**
 	 * @var string[]
 	 */
@@ -40,7 +40,7 @@ class EasyPayAdapter extends AbstractAdapter{
 		TradeType::APP      => 'app',
 		TradeType::WAP      => 'wap',
 	];
-	
+
 	/**
 	 * @var string[]
 	 */
@@ -52,7 +52,7 @@ class EasyPayAdapter extends AbstractAdapter{
 		TradeType::APP      => 'app',
 		TradeType::WAP      => 'wap',
 	];
-	
+
 	/**
 	 * EasyPayAdapter constructor.
 	 *
@@ -62,27 +62,27 @@ class EasyPayAdapter extends AbstractAdapter{
 		// 对小程序参数做特殊处理
 		if(isset($config['wechat'])){
 			$wxConfig = &$config['wechat'];
-			
+
 			if(isset($wxConfig['app_id']) && !isset($wxConfig['appid'])){
 				$wxConfig['appid'] = $wxConfig['app_id'];
 			}
 			if(isset($wxConfig['app_id']) && !isset($wxConfig['miniapp_id'])){
 				$wxConfig['miniapp_id'] = $wxConfig['app_id'];
 			}
-			
+
 			if(isset($wxConfig['sub_app_id']) && !isset($wxConfig['sub_appid'])){
 				$wxConfig['sub_appid'] = $wxConfig['sub_app_id'];
 			}
 			if(isset($wxConfig['sub_app_id']) && !isset($wxConfig['sub_miniapp_id'])){
 				$wxConfig['sub_miniapp_id'] = $wxConfig['sub_app_id'];
 			}
-			
+
 			unset($wxConfig);
 		}
-		
+
 		parent::__construct($config);
 	}
-	
+
 	/**
 	 * @inheritDoc
 	 */
@@ -91,12 +91,12 @@ class EasyPayAdapter extends AbstractAdapter{
 		if(empty($config)){
 			throw new InvalidConfigException("Unable to get a valid gateway configuration[$gateway]");
 		}
-		
+
 		return call_user_func([
 			Pay::class, $gateway,
 		], $config);
 	}
-	
+
 	/**
 	 * 解析入口参数
 	 *
@@ -108,16 +108,16 @@ class EasyPayAdapter extends AbstractAdapter{
 	 */
 	protected function parseArguments($channel, $action, Input $input, array $arguments){
 		$inputArr = $input->toArray();
-		
+
 		if($input instanceof UnifiedOrderInput){
 			unset($inputArr['trade_type']);
 		}
-		
+
 		array_unshift($arguments, $inputArr);
-		
+
 		return $arguments;
 	}
-	
+
 	/**
 	 * 解析输出数据
 	 *
@@ -130,11 +130,11 @@ class EasyPayAdapter extends AbstractAdapter{
 	protected function parseOutput($channel, $action, $result, array $arguments){
 		return $result->all();
 	}
-	
+
 	/**
 	 * @inheritDoc
 	 */
-	protected function realMethodName($channel, $action, Input $input){
+	protected function resolveRealMethodName($channel, $action, Input $input){
 		if('unifiedOrder' == $action){
 			/** @var \ Xin\Payment\Bus\UnifiedOrderInput $input */
 			if($channel === PayChannel::ALIPAY){
@@ -145,10 +145,10 @@ class EasyPayAdapter extends AbstractAdapter{
 				return $this->wechatUnifiedOrderMap[$tradeType];
 			}
 		}
-		
-		return parent::realMethodName($channel, $action, $input);
+
+		return parent::resolveRealMethodName($channel, $action, $input);
 	}
-	
+
 	/**
 	 * @param \Exception $e
 	 * @return \Exception
@@ -175,14 +175,14 @@ class EasyPayAdapter extends AbstractAdapter{
 		}
 		return $e;
 	}
-	
+
 	/**
 	 * 异步回调结果
 	 *
 	 * @param bool $needDecrypt
 	 * @return array
 	 */
-	public function notify($needDecrypt = false){
-		return $this->gateway()->verify(null, $needDecrypt);
+	public function notify($channel, $needDecrypt = false){
+		return $this->gateway($channel)->verify(null, $needDecrypt);
 	}
 }

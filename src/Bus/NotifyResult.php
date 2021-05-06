@@ -8,15 +8,16 @@
 namespace Xin\Payment\Bus;
 
 use Xin\Payment\Contracts\NotifyResult as NotifyResultContract;
+use Xin\Payment\PayChannel;
 use Xin\Payment\Support\Collection;
 
 class NotifyResult extends Collection implements NotifyResultContract{
-	
+
 	/**
 	 * @var string
 	 */
 	protected $channel;
-	
+
 	/**
 	 * NotifyResult constructor.
 	 *
@@ -27,7 +28,27 @@ class NotifyResult extends Collection implements NotifyResultContract{
 		parent::__construct($array);
 		$this->channel = $channel;
 	}
-	
+
+	/**
+	 * @inheritDoc
+	 */
+	public function replySuccess(){
+		return self::result($this->channel);
+	}
+
+	/**
+	 * @inheritDoc
+	 */
+	public function replyError($errMsg){
+		return self::result($this->channel, $errMsg);
+	}
+
+	/**
+	 * @inheritDoc
+	 */
+	public function isOk(){
+	}
+
 	/**
 	 * 异步支付渠道商的回调结果
 	 *
@@ -44,25 +65,5 @@ class NotifyResult extends Collection implements NotifyResultContract{
 			$state = $isSuccess ? 'SUCCESS' : 'FAIL';
 			return "<xml><return_code><![CDATA[{$state}]]></return_code><return_msg><![CDATA[{$errMsg}]]></return_msg></xml>";
 		}
-	}
-	
-	/**
-	 * @inheritDoc
-	 */
-	public function success(){
-		return self::result($this->channel);
-	}
-	
-	/**
-	 * @inheritDoc
-	 */
-	public function error($errMsg){
-		return self::result($this->channel, $errMsg);
-	}
-	
-	/**
-	 * @inheritDoc
-	 */
-	public function isOk(){
 	}
 }

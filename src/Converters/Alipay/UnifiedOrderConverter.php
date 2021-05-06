@@ -6,13 +6,13 @@
  */
 namespace Xin\Payment\Converters\Alipay;
 
-use  Xin\Payment\Bus\UnifiedOrderResult;
 use Xin\Payment\Bus\Input;
 use Xin\Payment\Bus\Result;
+use Xin\Payment\Bus\UnifiedOrderResult;
 use Xin\Payment\Contracts\Converter;
 
 class UnifiedOrderConverter implements Converter{
-	
+
 	/**
 	 * @param Input $input
 	 * @return Input
@@ -23,7 +23,7 @@ class UnifiedOrderConverter implements Converter{
 			'out_trade_no' => 'tradeNO',
 		]);
 	}
-	
+
 	/**
 	 * @param array $result
 	 * @param Input $input

@@ -13,14 +13,14 @@ use ReflectionClass;
 use ReflectionMethod;
 
 trait Macroable{
-	
+
 	/**
 	 * The registered string macros.
 	 *
 	 * @var array
 	 */
 	protected static $macros = [];
-	
+
 	/**
 	 * Register a custom macro.
 	 *
@@ -31,7 +31,7 @@ trait Macroable{
 	public static function macro($name, $macro){
 		static::$macros[$name] = $macro;
 	}
-	
+
 	/**
 	 * Mix another object into the class.
 	 *
@@ -44,7 +44,7 @@ trait Macroable{
 		$methods = (new ReflectionClass($mixin))->getMethods(
 			ReflectionMethod::IS_PUBLIC | ReflectionMethod::IS_PROTECTED
 		);
-		
+
 		foreach($methods as $method){
 			if($replace || !static::hasMacro($method->name)){
 				$method->setAccessible(true);
@@ -52,7 +52,7 @@ trait Macroable{
 			}
 		}
 	}
-	
+
 	/**
 	 * Checks if macro is registered.
 	 *
@@ -62,7 +62,7 @@ trait Macroable{
 	public static function hasMacro($name){
 		return isset(static::$macros[$name]);
 	}
-	
+
 	/**
 	 * Dynamically handle calls to the class.
 	 *
@@ -77,16 +77,16 @@ trait Macroable{
 				'Method %s::%s does not exist.', static::class, $method
 			));
 		}
-		
+
 		$macro = static::$macros[$method];
-		
+
 		if($macro instanceof Closure){
 			return call_user_func_array(Closure::bind($macro, null, static::class), $parameters);
 		}
-		
+
 		return $macro(...$parameters);
 	}
-	
+
 	/**
 	 * Dynamically handle calls to the class.
 	 *
@@ -101,13 +101,13 @@ trait Macroable{
 				'Method %s::%s does not exist.', static::class, $method
 			));
 		}
-		
+
 		$macro = static::$macros[$method];
-		
+
 		if($macro instanceof Closure){
 			return call_user_func_array($macro->bindTo($this, static::class), $parameters);
 		}
-		
+
 		return $macro(...$parameters);
 	}
 }

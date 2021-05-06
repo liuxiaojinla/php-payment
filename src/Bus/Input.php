@@ -9,13 +9,31 @@
 
 namespace Xin\Payment\Bus;
 
-use Xin\Payment\Support\Str;
-
 /**
  * 请求参数
  */
-abstract class Input extends Attribute{
-	
+abstract class Input{
+
+	use Attribute;
+
+	/**
+	 * 默认支付渠道
+	 *
+	 * @var string
+	 */
+	protected static $defaultChannel = 'wechat';
+
+	/**
+	 * Input constructor.
+	 *
+	 * @param array  $data
+	 * @param string $channel
+	 */
+	public function __construct(array $data = [], $channel = null){
+		$this->data = $data;
+		$this->channel = $channel ? $channel : static::$defaultChannel;
+	}
+
 	/**
 	 * 获取支付渠道
 	 *
@@ -25,7 +43,7 @@ abstract class Input extends Attribute{
 	public function setChannel($channel){
 		return $this->channel = $channel;
 	}
-	
+
 	/**
 	 * 移除字段
 	 *
@@ -34,7 +52,7 @@ abstract class Input extends Attribute{
 	public function remove($key){
 		unset($this->data[$key]);
 	}
-	
+
 	/**
 	 * 设置配置项
 	 *
@@ -46,7 +64,7 @@ abstract class Input extends Attribute{
 		$this->data[$name] = $value;
 		return $this;
 	}
-	
+
 	/**
 	 * 设置数据
 	 *
@@ -56,7 +74,7 @@ abstract class Input extends Attribute{
 	public function __set($name, $value){
 		$this->set($name, $value);
 	}
-	
+
 	/**
 	 * 移除字段
 	 *
@@ -65,7 +83,7 @@ abstract class Input extends Attribute{
 	public function __unset($name){
 		$this->remove($name);
 	}
-	
+
 	/**
 	 * Offset to set
 	 *
@@ -82,7 +100,7 @@ abstract class Input extends Attribute{
 	public function offsetSet($offset, $value){
 		$this->set($offset, $value);
 	}
-	
+
 	/**
 	 * Offset to unset
 	 *
@@ -96,27 +114,23 @@ abstract class Input extends Attribute{
 	public function offsetUnset($offset){
 		$this->remove($offset);
 	}
-	
+
 	/**
-	 * 动态调用函数
+	 * 获取默认支付渠道
 	 *
-	 * @param string $name
-	 * @param array  $arguments
-	 * @return mixed
+	 * @return string
 	 */
-	public function __call($name, $arguments){
-		$prefix = substr($name, 0, 3);
-		$key = Str::snake(substr($name, 3));
-		
-		if('get' == $prefix){
-			$default = isset($arguments[0]) ? $arguments[0] : null;
-			return $this->get($key, $default);
-		}elseif('set' == $prefix){
-			return $this->set($key, $arguments[0]);
-		}elseif('has'){
-			return $this->has($key);
-		}
-		
-		throw new \BadMethodCallException("{$name}方法不存在！");
+	public static function getDefaultChannel(){
+		return static::$defaultChannel;
 	}
+
+	/**
+	 * 设置默认支付渠道
+	 *
+	 * @param string $defaultChannel
+	 */
+	public static function setDefaultChannel($defaultChannel){
+		static::$defaultChannel = $defaultChannel;
+	}
+
 }

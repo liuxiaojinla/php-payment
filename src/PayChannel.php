@@ -12,12 +12,12 @@ namespace Xin\Payment;
  * 支付渠道
  */
 final class PayChannel{
-	
+
 	/**
 	 * 微信
 	 */
 	const WECHAT = 'wechat';
-	
+
 	/**
 	 * 支付宝
 	 */
