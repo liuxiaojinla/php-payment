@@ -9,14 +9,20 @@ namespace Xin\Payment\Bus;
 
 use Xin\Payment\Contracts\NotifyResult as NotifyResultContract;
 use Xin\Payment\PayChannel;
-use Xin\Payment\Support\Collection;
 
-class NotifyResult extends Collection implements NotifyResultContract{
+class NotifyResult implements NotifyResultContract{
+
+	use Attribute;
 
 	/**
-	 * @var string
+	 * @var bool
 	 */
-	protected $channel;
+	protected static $wechatV3 = false;
+
+	/**
+	 * @var array
+	 */
+	protected $raw = null;
 
 	/**
 	 * NotifyResult constructor.
@@ -25,8 +31,40 @@ class NotifyResult extends Collection implements NotifyResultContract{
 	 * @param array  $array
 	 */
 	public function __construct($channel, $array){
-		parent::__construct($array);
 		$this->channel = $channel;
+		$this->raw = $array;
+
+		$this->transformData();
+	}
+
+	/**
+	 * 转化数据
+	 */
+	protected function transformData(){
+		$converter = $this->resolveConverter();
+		if(empty($converter)){
+			$this->data = $this->raw;
+		}else{
+			$this->data = $converter->transform($this->raw);
+		}
+	}
+
+	/**
+	 * 解析转化器
+	 *
+	 * @return \Xin\Payment\Contracts\NotifyConverter
+	 */
+	protected function resolveConverter(){
+		$class = get_class($this);
+		$pos = strripos($class, "\\");
+		$className = substr($class, $pos + 1, -6);
+
+		$realClass = "\\Xin\\Payment\\Converters\\{$this->channel}\\{$className}NotifyConverter";
+		if(!class_exists($realClass)){
+			return null;
+		}
+
+		return new $realClass($this);
 	}
 
 	/**
@@ -47,6 +85,16 @@ class NotifyResult extends Collection implements NotifyResultContract{
 	 * @inheritDoc
 	 */
 	public function isOk(){
+		if($this->channel === PayChannel::WECHAT){
+			if($this->raw['return_code'] === 'SUCCESS'
+				&& (!isset($this->raw['result_code']) || $this->raw['result_code'] === 'SUCCESS')){
+				return true;
+			}
+		}elseif($this->channel === PayChannel::ALIPAY){
+			return true;
+		}
+
+		return false;
 	}
 
 	/**
@@ -62,8 +110,37 @@ class NotifyResult extends Collection implements NotifyResultContract{
 		if(PayChannel::ALIPAY == $channel){
 			return $errMsg ? $errMsg : '';
 		}else{
-			$state = $isSuccess ? 'SUCCESS' : 'FAIL';
-			return "<xml><return_code><![CDATA[{$state}]]></return_code><return_msg><![CDATA[{$errMsg}]]></return_msg></xml>";
+			if(static::$wechatV3){
+				return json_encode([
+					"code"    => $isSuccess ? "SUCCESS" : "FAIL",
+					"message" => $errMsg,
+				]);
+			}else{
+				$state = $isSuccess ? 'SUCCESS' : 'FAIL';
+				return "<xml><return_code><![CDATA[{$state}]]></return_code><return_msg><![CDATA[{$errMsg}]]></return_msg></xml>";
+			}
 		}
 	}
+
+	/**
+	 * @return string
+	 */
+	public function getChannel(){
+		return $this->channel;
+	}
+
+	/**
+	 * @return array
+	 */
+	public function getRaw(){
+		return $this->raw;
+	}
+
+	/**
+	 * @param bool $wechatV3
+	 */
+	public static function setWechatV3($wechatV3){
+		static::$wechatV3 = $wechatV3;
+	}
+
 }

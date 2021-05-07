@@ -25,8 +25,9 @@ interface Adapter{
 	 * 验证回调数据
 	 *
 	 * @param string $channel
+	 * @param string $data
 	 * @param bool   $needDecrypt 是否需要对数据进行解密
 	 * @return array
 	 */
-	public function notify($channel, $needDecrypt = false);
+	public function verify($channel, $data = null, $needDecrypt = false);
 }

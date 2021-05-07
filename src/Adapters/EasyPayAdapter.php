@@ -85,6 +85,7 @@ class EasyPayAdapter extends AbstractAdapter{
 
 	/**
 	 * @inheritDoc
+	 * @return \Yansongda\Pay\Gateways\Alipay|\Yansongda\Pay\Gateways\Wechat|mixed
 	 */
 	protected function createGateway($gateway){
 		$config = $this->config(strtolower($gateway));
@@ -180,6 +181,7 @@ class EasyPayAdapter extends AbstractAdapter{
 	 * 异步回调结果
 	 *
 	 * @param string $channel
+	 * @param string $data
 	 * @param bool   $needDecrypt
 	 * @return array
 	 * @throws \Xin\Payment\Exceptions\BusinessException
@@ -187,9 +189,9 @@ class EasyPayAdapter extends AbstractAdapter{
 	 * @throws \Xin\Payment\Exceptions\InvalidConfigException
 	 * @throws \Xin\Payment\Exceptions\InvalidSignException
 	 */
-	public function notify($channel, $needDecrypt = false){
+	public function verify($channel, $data = null, $needDecrypt = false){
 		try{
-			return $this->gateway($channel)->verify(null, $needDecrypt);
+			return $this->gateway($channel)->verify($data, $needDecrypt)->toArray();
 		}catch(\Exception $e){
 			throw $this->castException($e);
 		}

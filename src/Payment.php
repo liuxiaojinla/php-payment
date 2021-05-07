@@ -148,12 +148,13 @@ class Payment{
 	 * 获取异步回调结果
 	 *
 	 * @param string $channel
+	 * @param string $data
 	 * @return \Xin\Payment\Bus\NotifyResult
 	 */
-	public function notify($channel = null){
+	public function notify($channel = null, $data = null){
 		return new NotifyResult(
 			$channel,
-			$this->adapter()->notify($channel)
+			$this->adapter()->verify($channel, $data)
 		);
 	}
 
@@ -161,12 +162,13 @@ class Payment{
 	 * 获取统一下单异步回调结果
 	 *
 	 * @param string $channel
+	 * @param string $data
 	 * @return \ Xin\Payment\Bus\UnifiedOrderNotify
 	 */
-	public function unifiedOrderNotify($channel = null){
+	public function unifiedOrderNotify($channel = null, $data = null){
 		return new UnifiedOrderNotify(
 			$channel,
-			$this->adapter()->notify($channel)
+			$this->notify($channel, $data)->toArray()
 		);
 	}
 
@@ -174,12 +176,13 @@ class Payment{
 	 * 获取退款异步回调结果
 	 *
 	 * @param string $channel
+	 * @param string $data
 	 * @return \ Xin\Payment\Bus\RefundNotify
 	 */
-	public function refundNotify($channel = null){
+	public function refundNotify($channel = null, $data = null){
 		return new RefundNotify(
 			$channel,
-			$this->adapter()->notify(true)
+			$this->notify($channel, $data)->toArray()
 		);
 	}
 
