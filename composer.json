@@ -11,6 +11,7 @@
 	"license":"Apache-2.0",
 	"minimum-stability":"stable",
 	"require":{
+		"php": ">=7.1.9",
 		"xin/support": "^1.0",
 		"xin/capsule": "^1.0",
 		"yansongda/pay":"^2.10"
