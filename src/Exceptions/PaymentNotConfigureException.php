@@ -7,6 +7,7 @@
 
 namespace Xin\Payment\Exceptions;
 
-class DecryptException extends PaymentException{
+class PaymentNotConfigureException extends \LogicException
+{
 
 }

@@ -2,35 +2,25 @@
 	"name":"xin/payment",
 	"description":"统一化微信支付、支付宝支付API",
 	"type":"library",
-	"version":"4.1.20",
 	"authors":[
 		{
 			"name":"晋",
 			"email":"657306123@qq.com"
 		}
 	],
+	"license":"Apache-2.0",
+	"minimum-stability":"stable",
+	"require":{
+		"yansongda/pay":"^2.10"
+	},
+	"require-dev":{
+	},
+	"suggest":{
+		"yansongda/pay":"支付宝与微信支付的轮子"
+	},
 	"autoload":{
 		"psr-4":{
 			"Xin\\Payment\\":"src/"
 		}
-	},
-	"license":"Apache-2.0",
-	"minimum-stability":"stable",
-	"require":{
-		"ext-curl":"*",
-		"ext-json":"*",
-		"ext-dom":"*",
-		"ext-libxml":"*",
-		"ext-simplexml":"*",
-		"ext-ctype":"*",
-		"ext-mbstring":"*",
-		"ext-openssl":"*",
-		"pimple/pimple":"^3.2"
-	},
-	"require-dev":{
-		"yansongda/pay":"^2.10"
-	},
-	"suggest":{
-		"yansongda/pay":"支付宝与微信支付的轮子"
 	}
 }

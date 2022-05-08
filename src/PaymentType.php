@@ -7,11 +7,13 @@
 
 namespace Xin\Payment;
 
-use Xin\Payment\Support\Collection;
+class PaymentType
+{
 
-/**
- * Class Config.
- */
-class Config extends Collection{
+	// 微信支付
+	public const WECHAT = 'wechat';
+
+	// 支付宝支付
+	public const ALIPAY = 'alipay';
 
 }
