@@ -1,9 +1,9 @@
 <?php
 
-namespace Xin\Payment;
+namespace Xin\Payment\Laravel;
 
-use plugins\order\contract\PayOrderProvider as PayLogContract;
-use plugins\order\model\PayLog;
+use Xin\Payment\PayLog;
+use Xin\Payment\PayLogContract;
 
 class PayOrderProviderProvider implements PayLogContract
 {
@@ -14,7 +14,7 @@ class PayOrderProviderProvider implements PayLogContract
 	public function transactionIdToOutTradeNo($transactionId, $type = null)
 	{
 		return PayLog::where([
-			'transaction_id' => $transactionId
+			'transaction_id' => $transactionId,
 		])->value('out_trade_no');
 	}
 
@@ -24,7 +24,7 @@ class PayOrderProviderProvider implements PayLogContract
 	public function retrieveByOutTradeNo($outTradeNo, $type = null)
 	{
 		return PayLog::where([
-			'out_trade_no' => $outTradeNo
+			'out_trade_no' => $outTradeNo,
 		])->find();
 	}
 
@@ -34,7 +34,7 @@ class PayOrderProviderProvider implements PayLogContract
 	public function retrieveByTransactionId($transactionId, $type = null)
 	{
 		return PayLog::where([
-			'transaction_id' => $transactionId
+			'transaction_id' => $transactionId,
 		])->find();
 	}
 
@@ -44,7 +44,7 @@ class PayOrderProviderProvider implements PayLogContract
 	public function retrieveByPayTradeNo($payTradeNo, $type = null)
 	{
 		return PayLog::where([
-			'pay_trade_no' => $payTradeNo
+			'pay_trade_no' => $payTradeNo,
 		])->find();
 	}
 }

@@ -1,14 +1,14 @@
 <?php
-namespace Xin\Payment;
+
+namespace Xin\Payment\Gateways;
 
 use Xin\Payment\Contracts\Gateway as GatewayContract;
-use Yansongda\Pay\Contracts\GatewayApplicationInterface;
-use Yansongda\Pay\Exceptions\BusinessException;
-use Yansongda\Pay\Exceptions\GatewayException;
-use Yansongda\Pay\Exceptions\InvalidConfigException;
-use Yansongda\Pay\Exceptions\InvalidGatewayException;
-use Yansongda\Pay\Exceptions\InvalidSignException;
+use Xin\Payment\GatewayManager;
 
+
+/**
+ * @deprecated
+ */
 abstract class AbstractGateway implements GatewayContract
 {
 

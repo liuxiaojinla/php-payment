@@ -7,12 +7,13 @@ use Xin\Capsule\WithContainer;
 use Xin\Payment\Contracts\Factory as PaymentFactory;
 use Xin\Payment\Contracts\GatewayFactory as GatewayFactoryContract;
 use Xin\Payment\Contracts\PayOrderProvider;
-use Xin\Saas\App\HasAppId;
+use Xin\Payment\Gateways\WechatGateway;
+use Xin\Payment\Laravel\PayOrderProviderProvider;
 use Xin\Support\Str;
 
 class GatewayManager implements GatewayFactoryContract
 {
-	use WithConfig, WithContainer, HasAppId;
+	use WithConfig, WithContainer;
 
 	/**
 	 * @var array
@@ -60,7 +61,7 @@ class GatewayManager implements GatewayFactoryContract
 
 		return [
 			'pay_order' => $payOrder,
-			'gateway' => $gateway,
+			'gateway'   => $gateway,
 		];
 	}
 
@@ -80,7 +81,7 @@ class GatewayManager implements GatewayFactoryContract
 
 		return [
 			'pay_order' => $payOrder,
-			'gateway' => $gateway,
+			'gateway'   => $gateway,
 		];
 	}
 
@@ -200,20 +201,20 @@ class GatewayManager implements GatewayFactoryContract
 		$payNo = Str::makeOrderSn();
 
 		$data = [
-			'app_id' => $this->getAppId(),
-			'type' => $type,
-			'pay_no' => $payNo,
+			'app_id'       => $this->getAppId(),
+			'type'         => $type,
+			'pay_no'       => $payNo,
 			'out_trade_no' => $paymentInfo['out_trade_no'],
-			'amount' => $paymentInfo['out_trade_no'] ?? '',
-			'body' => $paymentInfo['body'],
-			'detail' => $paymentInfo,
-			'return_url' => $paymentInfo['return_url'] ?? '',
-			'notify_url' => $paymentInfo['notify_url'] ?? '',
-			'user_id' => $paymentInfo['user_id'] ?? 0,
-			'voucher' => '',
-			'mch_info' => '',
-			'status' => 0,
-			'pay_time' => 0,
+			'amount'       => $paymentInfo['out_trade_no'] ?? '',
+			'body'         => $paymentInfo['body'],
+			'detail'       => $paymentInfo,
+			'return_url'   => $paymentInfo['return_url'] ?? '',
+			'notify_url'   => $paymentInfo['notify_url'] ?? '',
+			'user_id'      => $paymentInfo['user_id'] ?? 0,
+			'voucher'      => '',
+			'mch_info'     => '',
+			'status'       => 0,
+			'pay_time'     => 0,
 		];
 
 		if (isset($paymentInfo['total_fee'])) {

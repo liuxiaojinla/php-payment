@@ -2,6 +2,9 @@
 
 namespace Xin\Payment\Contracts;
 
+/**
+ * @deprecated
+ */
 interface PayOrderProvider
 {
 	/**

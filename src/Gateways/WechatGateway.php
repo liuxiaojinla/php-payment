@@ -1,8 +1,12 @@
 <?php
-namespace Xin\Payment;
+
+namespace Xin\Payment\Gateways;
+
+use Yansongda\Pay\Provider\Wechat;
 
 /**
- * @property \Yansongda\Pay\Gateways\Wechat $gateway
+ * @property Wechat $gateway
+ * @deprecated
  */
 class WechatGateway extends AbstractGateway
 {

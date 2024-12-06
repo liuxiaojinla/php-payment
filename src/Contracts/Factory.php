@@ -1,5 +1,11 @@
 <?php
+
 namespace Xin\Payment\Contracts;
+
+use Yansongda\Pay\Provider\Alipay;
+use Yansongda\Pay\Provider\Douyin;
+use Yansongda\Pay\Provider\Unipay;
+use Yansongda\Pay\Provider\Wechat;
 
 interface Factory
 {
@@ -7,9 +13,9 @@ interface Factory
 	/**
 	 * 微信支付
 	 *
-	 * @param null $name
+	 * @param string $name
 	 * @param array $options
-	 * @return \Yansongda\Pay\Gateways\Wechat
+	 * @return Wechat
 	 */
 	public function wechat($name = null, array $options = []);
 
@@ -23,9 +29,9 @@ interface Factory
 	/**
 	 * 支付宝支付
 	 *
-	 * @param null $name
+	 * @param string $name
 	 * @param array $options
-	 * @return \Yansongda\Pay\Gateways\Alipay
+	 * @return Alipay
 	 */
 	public function alipay($name = null, array $options = []);
 
@@ -37,11 +43,35 @@ interface Factory
 	public function hasAlipay($name = null);
 
 	/**
-	 * 获取配置数据
+	 * 银联支付
 	 *
-	 * @param string $key
-	 * @return array
+	 * @param string $name
+	 * @param array $options
+	 * @return Unipay
 	 */
-	public function getConfig($key = null, $default = null);
+	public function unipay($name = null, array $options = []);
+
+	/**
+	 * 是否配置银联支付
+	 *
+	 * @return bool
+	 */
+	public function hasUnipay($name = null);
+
+	/**
+	 * 银联支付
+	 *
+	 * @param string $name
+	 * @param array $options
+	 * @return Douyin
+	 */
+	public function douyin($name = null, array $options = []);
+
+	/**
+	 * 是否配置银联支付
+	 *
+	 * @return bool
+	 */
+	public function hasDouyin($name = null);
 
 }

@@ -1,14 +1,14 @@
 <?php
+
 namespace Xin\Payment;
 
-use Xin\Payment\Exceptions\PaymentNotConfigureException;
+use Xin\Capsule\WithConfig;
 use Xin\Payment\Contracts\Factory as PaymentFactory;
 use Xin\Support\Arr;
-use Xin\Support\File;
-use Yansongda\Pay\Pay;
 
 class PaymentManager implements PaymentFactory
 {
+	use WithConfig, HasWechat, HasAlipay, HasUnipay, HasDouyin;
 
 	/**
 	 * @var array
@@ -30,67 +30,9 @@ class PaymentManager implements PaymentFactory
 	 */
 	public function wechat($name = null, array $options = [])
 	{
-		$name = $name ?: $this->getDefault('wechat');
+		$name = $name ?: $this->getWechatDefaultProvider();
 
-		$config = $this->getConfig("wechat.{$name}");
-		if (empty($config)) {
-			throw new PaymentNotConfigureException("payment config 'wechat.{$name}' not defined.");
-		}
-
-		return $this->factoryWechat($config, $options);
-	}
-
-	/**
-	 * 构建微信支付实例
-	 * @param array $config
-	 * @param array $options
-	 * @return \Yansongda\Pay\Gateways\Wechat
-	 */
-	protected function factoryWechat($config, $options)
-	{
-		$config = $this->initWechatConfig($config, $options);
-
-		$config = array_merge($this->getConfig('defaults'), $config);
-
-		return $this->initApplication(
-			Pay::wechat($config),
-			$options
-		);
-	}
-
-
-	/**
-	 * 初始化微信配置信息
-	 *
-	 * @param array $config
-	 * @return array
-	 */
-	protected function initWechatConfig($config, $options)
-	{
-		if (isset($config['appid'])) {
-			// fix official
-			if (!isset($config['app_id'])) {
-				$config['app_id'] = $config['appid'];
-			}
-
-			// fix miniapp
-			if (!isset($config['miniapp_id'])) {
-				$config['miniapp_id'] = $config['appid'];
-			}
-		}
-
-		// cert support
-		if (isset($options['cert'])) {
-			if (isset($config['cert_client_content'])) {
-				$config['cert_client'] = File::putTempFile($config['cert_client_content']);
-			}
-
-			if (isset($config['cert_key_content'])) {
-				$config['cert_key'] = File::putTempFile($config['cert_key_content']);
-			}
-		}
-
-		return $config;
+		return $this->makeWechat($this->getWechatProviderConfig($name), $options, $name);
 	}
 
 	/**
@@ -98,11 +40,11 @@ class PaymentManager implements PaymentFactory
 	 */
 	public function hasWechat($name = null)
 	{
-		$name = $name ?: $this->getDefault('wechat');
-		$key = 'wechat.' . $name;
-		return $this->hasConfig($key) &&
-			$this->hasConfig($key . '.mch_id') &&
-			$this->hasConfig($key . '.key');
+		$name = $name ?: $this->getWechatDefaultProvider();
+
+		return $this->hasWechatProviderConfig($name) &&
+			$this->hasWechatProviderConfig($name . '.mch_id') &&
+			$this->hasWechatProviderConfig($name . '.key');
 	}
 
 	/**
@@ -110,43 +52,9 @@ class PaymentManager implements PaymentFactory
 	 */
 	public function alipay($name = null, array $options = [])
 	{
-		$name = $name ?: $this->getDefault('alipay');
+		$name = $name ?: $this->getAlipayDefaultProvider();
 
-		$config = $this->getConfig("alipay.{$name}");
-		if (empty($config)) {
-			throw new PaymentNotConfigureException("payment config 'alipay.{$name}' not defined.");
-		}
-
-		return $this->factoryAlipay($config, $options);
-	}
-
-	/**
-	 * 构建支付宝实例
-	 * @param array $config
-	 * @param array $options
-	 * @return \Yansongda\Pay\Gateways\Alipay
-	 */
-	protected function factoryAlipay(array $config, array $options)
-	{
-		$config = $this->initAlipayConfig($config, $options);
-
-		$config = array_merge($this->getConfig('defaults'), $config);
-
-		return $this->initApplication(
-			Pay::alipay($config),
-			$options
-		);
-	}
-
-	/**
-	 * 初始化支付宝配置信息
-	 * @param array $config
-	 * @param array $options
-	 * @return array
-	 */
-	protected function initAlipayConfig(array $config, array $options)
-	{
-		return $config;
+		return $this->makeAlipay($this->getAlipayProviderConfig($name), $options, $name);
 	}
 
 	/**
@@ -154,22 +62,50 @@ class PaymentManager implements PaymentFactory
 	 */
 	public function hasAlipay($name = null)
 	{
-		$name = $name ?: $this->getDefault('alipay');
-		return $this->hasConfig('alipay.' . $name);
+		$name = $name ?: $this->getAlipayDefaultProvider();
+
+		return $this->hasAlipayProviderConfig($name);
 	}
 
 	/**
 	 * @inheritDoc
 	 */
-	public function getConfig($key = null, $default = null)
+	public function unipay($name = null, array $options = [])
 	{
-		if (null === $key) {
-			return $this->config;
-		}
+		$name = $name ?: $this->getUnipayDefaultProvider();
 
-		return Arr::get($this->config, $key, $default);
+		return $this->makeAlipay($this->getUnipayProviderConfig($name), $options, $name);
 	}
 
+	/**
+	 * @inheritDoc
+	 */
+	public function hasUnipay($name = null)
+	{
+		$name = $name ?: $this->getUnipayDefaultProvider();
+
+		return $this->hasUnipayProviderConfig($name);
+	}
+
+	/**
+	 * @inheritDoc
+	 */
+	public function douyin($name = null, array $options = [])
+	{
+		$name = $name ?: $this->getDouyinDefaultProvider();
+
+		return $this->makeAlipay($this->getDouyinProviderConfig($name), $options, $name);
+	}
+
+	/**
+	 * @inheritDoc
+	 */
+	public function hasDouyin($name = null)
+	{
+		$name = $name ?: $this->getDouyinDefaultProvider();
+
+		return $this->hasDouyinProviderConfig($name);
+	}
 
 	/**
 	 * 指定类型的配置是否存在
@@ -198,12 +134,5 @@ class PaymentManager implements PaymentFactory
 		return $driver;
 	}
 
-	/**
-	 * @return string
-	 */
-	protected function getDefault($type)
-	{
-		return Arr::get($this->config, "defaults.{$type}", 'default');
-	}
 
 }

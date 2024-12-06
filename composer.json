@@ -14,7 +14,7 @@
 		"php": ">=7.1.9",
 		"xin/support": "^1.0",
 		"xin/capsule": "^1.0",
-		"yansongda/pay":"^2.10"
+		"yansongda/pay": "^3.5"
 	},
 	"require-dev":{
 	},
@@ -24,6 +24,21 @@
 	"autoload":{
 		"psr-4":{
 			"Xin\\Payment\\":"src/"
+		}
+	},
+	"extra": {
+		"laravel": {
+			"providers": [
+				"Xin\\Payment\\Laravel\\PaymentServiceProvider"
+			]
+		},
+		"think": {
+			"services": [
+				"Xin\\Payment\\ThinkPHP\\PaymentServiceProvider"
+			],
+			"config": {
+				"menu": "config.php"
+			}
 		}
 	}
 }
