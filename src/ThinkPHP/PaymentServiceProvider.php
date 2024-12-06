@@ -1,7 +1,7 @@
 <?php
 namespace Xin\Payment\ThinkPHP;
 
-use Xin\Contracts\Payment\Factory as PaymentFactory;
+use Xin\Payment\Contracts\Factory as PaymentFactory;
 use Xin\Payment\PaymentManager;
 use Xin\Thinkphp\Foundation\ServiceProvider;
 

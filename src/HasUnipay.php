@@ -50,8 +50,7 @@ trait HasUnipay
 		}
 
 		$config = $this->initUnipayConfig($config, $options);
-
-		$config = array_merge($this->getConfig('defaults'), $config);
+		$config = $this->initApplicationConfig($config, $options);
 
 		return $this->initApplication(
 			Pay::unipay($config),

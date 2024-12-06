@@ -11,6 +11,9 @@ use Xin\Payment\Gateways\WechatGateway;
 use Xin\Payment\Laravel\PayOrderProviderProvider;
 use Xin\Support\Str;
 
+/**
+ * @deprecated
+ */
 class GatewayManager implements GatewayFactoryContract
 {
 	use WithConfig, WithContainer;

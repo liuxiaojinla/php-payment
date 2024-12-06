@@ -50,8 +50,7 @@ trait HasAlipay
 		}
 
 		$config = $this->initAlipayConfig($config, $options);
-
-		$config = array_merge($this->getConfig('defaults'), $config);
+		$config = $this->initApplicationConfig($config, $options);
 
 		return $this->initApplication(
 			Pay::alipay($config),

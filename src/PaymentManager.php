@@ -4,8 +4,11 @@ namespace Xin\Payment;
 
 use Xin\Capsule\WithConfig;
 use Xin\Payment\Contracts\Factory as PaymentFactory;
-use Xin\Support\Arr;
+use Yansongda\Pay\Contract\ProviderInterface;
 
+/**
+ * @template T of ProviderInterface
+ */
 class PaymentManager implements PaymentFactory
 {
 	use WithConfig, HasWechat, HasAlipay, HasUnipay, HasDouyin;
@@ -74,7 +77,7 @@ class PaymentManager implements PaymentFactory
 	{
 		$name = $name ?: $this->getUnipayDefaultProvider();
 
-		return $this->makeAlipay($this->getUnipayProviderConfig($name), $options, $name);
+		return $this->makeUnipay($this->getUnipayProviderConfig($name), $options, $name);
 	}
 
 	/**
@@ -94,7 +97,7 @@ class PaymentManager implements PaymentFactory
 	{
 		$name = $name ?: $this->getDouyinDefaultProvider();
 
-		return $this->makeAlipay($this->getDouyinProviderConfig($name), $options, $name);
+		return $this->makeDouyin($this->getDouyinProviderConfig($name), $options, $name);
 	}
 
 	/**
@@ -108,26 +111,25 @@ class PaymentManager implements PaymentFactory
 	}
 
 	/**
-	 * 指定类型的配置是否存在
-	 *
-	 * @param string $key
-	 * @return bool
+	 * 初始化默认配置
+	 * @param array $config
+	 * @param array $options
+	 * @return array
 	 */
-	public function hasConfig($key = null)
+	public function initApplicationConfig(array $config, array $options)
 	{
-		if ($key == null) {
-			return !empty($this->config);
-		}
-
-		return Arr::has($this->config, $key);
+		return array_replace_recursive([
+			'logger' => $this->getConfig('logger', []),
+			'http'   => $this->getConfig('http', []),
+		], $config);
 	}
 
 	/**
 	 * 初始化
 	 *
-	 * @param mixed $driver
+	 * @param T $driver
 	 * @param array $options
-	 * @return mixed
+	 * @return T
 	 */
 	protected function initApplication($driver, array $options = [])
 	{

@@ -51,8 +51,7 @@ trait HasWechat
 		}
 
 		$config = $this->initWechatConfig($config, $options);
-
-		$config = array_merge($this->getConfig('defaults'), $config);
+		$config = $this->initApplicationConfig($config, $options);
 
 		return $this->initApplication(
 			Pay::wechat($config),

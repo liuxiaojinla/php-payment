@@ -50,8 +50,7 @@ trait HasDouyin
 		}
 
 		$config = $this->initDouyinConfig($config, $options);
-
-		$config = array_merge($this->getConfig('defaults'), $config);
+		$config = $this->initApplicationConfig($config, $options);
 
 		return $this->initApplication(
 			Pay::Douyin($config),
