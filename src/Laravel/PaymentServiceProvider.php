@@ -31,7 +31,7 @@ class PaymentServiceProvider extends ServiceProvider
 	}
 
 	/**
-	 * 注册站点配置管理器
+	 * 注册管理器
 	 * @return void
 	 */
 	protected function registerManager()
@@ -48,13 +48,25 @@ class PaymentServiceProvider extends ServiceProvider
 		$this->app->alias(PaymentManager::class, 'payment');
 		$this->app->alias(PaymentManager::class, PaymentFactory::class);
 
-		$this->app->singleton('menu.driver', function ($app) {
-			return $app['menu']->menu();
+		$this->app->singleton('payment.wechat', function ($app) {
+			return $app['payment']->wechat();
+		});
+
+		$this->app->singleton('payment.alipay', function ($app) {
+			return $app['payment']->alipay();
+		});
+
+		$this->app->singleton('payment.unipay', function ($app) {
+			return $app['payment']->unipay();
+		});
+
+		$this->app->singleton('payment.douyin', function ($app) {
+			return $app['payment']->douyin();
 		});
 	}
 
 	/**
-	 * 注册菜单驱动
+	 * 注册驱动
 	 */
 	protected function registerDrivers(PaymentManager $manager)
 	{
@@ -77,24 +89,5 @@ class PaymentServiceProvider extends ServiceProvider
 		$this->publishes([
 			$configPath => config_path('payment.php'),
 		], 'config');
-
-//		$this->replaceInFile(
-//			"runtime_path('logs')",
-//			"storage_path('logs')",
-//			$configPath
-//		);
-	}
-
-	/**
-	 * Replace a given string within a given file.
-	 *
-	 * @param  string  $search
-	 * @param  string  $replace
-	 * @param  string  $path
-	 * @return void
-	 */
-	protected function replaceInFile($search, $replace, $path)
-	{
-		file_put_contents($path, str_replace($search, $replace, file_get_contents($path)));
 	}
 }

@@ -37,7 +37,7 @@
 				"Xin\\Payment\\ThinkPHP\\PaymentServiceProvider"
 			],
 			"config": {
-				"menu": "config.php"
+				"payment": "config/config.php"
 			}
 		}
 	}
