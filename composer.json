@@ -1,6 +1,6 @@
 {
 	"name":"xin/payment",
-	"description":"统一化微信支付、支付宝支付API",
+	"description":"统一化微信支付、支付宝支付API，让支付集成更简单！",
 	"type":"library",
 	"authors":[
 		{
