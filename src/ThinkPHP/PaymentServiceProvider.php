@@ -1,11 +1,11 @@
 <?php
 namespace Xin\Payment\ThinkPHP;
 
+use think\Service;
 use Xin\Payment\Contracts\Factory as PaymentFactory;
 use Xin\Payment\PaymentManager;
-use Xin\Thinkphp\Foundation\ServiceProvider;
 
-class PaymentServiceProvider extends ServiceProvider
+class PaymentServiceProvider extends Service
 {
 
 	/**

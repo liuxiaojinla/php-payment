@@ -2,10 +2,6 @@
 
 namespace Xin\Payment;
 
-use Xin\Payment\Exceptions\PaymentNotConfigureException;
-use Yansongda\Pay\Pay;
-use Yansongda\Pay\Provider\Alipay;
-
 trait HasAlipay
 {
 	/**
@@ -34,28 +30,6 @@ trait HasAlipay
 	protected function hasAlipayProviderConfig($name)
 	{
 		return $this->hasConfig("alipay.{$name}");
-	}
-
-	/**
-	 * 构建支付宝实例
-	 * @param array $config
-	 * @param array $options
-	 * @param string|null $providerName
-	 * @return Alipay
-	 */
-	protected function makeAlipay(array $config, array $options, string $providerName = null)
-	{
-		if (empty($config)) {
-			throw new PaymentNotConfigureException("payment config 'alipay.{$providerName}' not defined.");
-		}
-
-		$config = $this->initAlipayConfig($config, $options);
-		$config = $this->initApplicationConfig($config, $options);
-
-		return $this->initApplication(
-			Pay::alipay($config),
-			$options
-		);
 	}
 
 	/**

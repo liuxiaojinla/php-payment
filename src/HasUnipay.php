@@ -37,28 +37,6 @@ trait HasUnipay
 	}
 
 	/**
-	 * 构建银联实例
-	 * @param array $config
-	 * @param array $options
-	 * @param string|null $providerName
-	 * @return Unipay
-	 */
-	protected function makeUnipay(array $config, array $options, string $providerName = null)
-	{
-		if (empty($config)) {
-			throw new PaymentNotConfigureException("payment config 'Unipay.{$providerName}' not defined.");
-		}
-
-		$config = $this->initUnipayConfig($config, $options);
-		$config = $this->initApplicationConfig($config, $options);
-
-		return $this->initApplication(
-			Pay::unipay($config),
-			$options
-		);
-	}
-
-	/**
 	 * 初始化银联配置信息
 	 * @param array $config
 	 * @param array $options

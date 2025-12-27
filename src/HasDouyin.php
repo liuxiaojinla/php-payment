@@ -37,28 +37,6 @@ trait HasDouyin
 	}
 
 	/**
-	 * 构建抖音实例
-	 * @param array $config
-	 * @param array $options
-	 * @param string|null $providerName
-	 * @return Douyin
-	 */
-	protected function makeDouyin(array $config, array $options, string $providerName = null)
-	{
-		if (empty($config)) {
-			throw new PaymentNotConfigureException("payment config 'Douyin.{$providerName}' not defined.");
-		}
-
-		$config = $this->initDouyinConfig($config, $options);
-		$config = $this->initApplicationConfig($config, $options);
-
-		return $this->initApplication(
-			Pay::Douyin($config),
-			$options
-		);
-	}
-
-	/**
 	 * 初始化抖音配置信息
 	 * @param array $config
 	 * @param array $options

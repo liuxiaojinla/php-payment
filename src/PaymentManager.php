@@ -4,11 +4,10 @@ namespace Xin\Payment;
 
 use Xin\Capsule\WithConfig;
 use Xin\Payment\Contracts\Factory as PaymentFactory;
+use Xin\Payment\Exceptions\PaymentNotConfigureException;
 use Yansongda\Pay\Contract\ProviderInterface;
+use Yansongda\Pay\Pay;
 
-/**
- * @template T of ProviderInterface
- */
 class PaymentManager implements PaymentFactory
 {
 	use WithConfig, HasWechat, HasAlipay, HasUnipay, HasDouyin;
@@ -35,7 +34,18 @@ class PaymentManager implements PaymentFactory
 	{
 		$name = $name ?: $this->getWechatDefaultProvider();
 
-		return $this->makeWechat($this->getWechatProviderConfig($name), $options, $name);
+		if (empty($config)) {
+			throw new PaymentNotConfigureException("payment config 'wechat.{$name}' not defined.");
+		}
+
+		$config = $this->getWechatProviderConfig($name);
+		$config = $this->initWechatConfig($config, $options);
+		$config = $this->initApplicationConfig($config, $options);
+
+		return $this->initApplication(
+			Pay::wechat($config),
+			$options
+		);
 	}
 
 	/**
@@ -57,7 +67,18 @@ class PaymentManager implements PaymentFactory
 	{
 		$name = $name ?: $this->getAlipayDefaultProvider();
 
-		return $this->makeAlipay($this->getAlipayProviderConfig($name), $options, $name);
+		if (empty($config)) {
+			throw new PaymentNotConfigureException("payment config 'alipay.{$name}' not defined.");
+		}
+
+		$config = $this->getAlipayProviderConfig($name);
+		$config = $this->initAlipayConfig($config, $options);
+		$config = $this->initApplicationConfig($config, $options);
+
+		return $this->initApplication(
+			Pay::alipay($config),
+			$options
+		);
 	}
 
 	/**
@@ -77,7 +98,18 @@ class PaymentManager implements PaymentFactory
 	{
 		$name = $name ?: $this->getUnipayDefaultProvider();
 
-		return $this->makeUnipay($this->getUnipayProviderConfig($name), $options, $name);
+		if (empty($config)) {
+			throw new PaymentNotConfigureException("payment config 'Unipay.{$name}' not defined.");
+		}
+
+		$config = $this->getUnipayProviderConfig($name);
+		$config = $this->initUnipayConfig($config, $options);
+		$config = $this->initApplicationConfig($config, $options);
+
+		return $this->initApplication(
+			Pay::unipay($config),
+			$options
+		);
 	}
 
 	/**
@@ -97,7 +129,18 @@ class PaymentManager implements PaymentFactory
 	{
 		$name = $name ?: $this->getDouyinDefaultProvider();
 
-		return $this->makeDouyin($this->getDouyinProviderConfig($name), $options, $name);
+		if (empty($config)) {
+			throw new PaymentNotConfigureException("payment config 'Douyin.{$name}' not defined.");
+		}
+
+		$config = $this->getDouyinProviderConfig($name);
+		$config = $this->initDouyinConfig($config, $options);
+		$config = $this->initApplicationConfig($config, $options);
+
+		return $this->initApplication(
+			Pay::Douyin($config),
+			$options
+		);
 	}
 
 	/**
@@ -120,16 +163,16 @@ class PaymentManager implements PaymentFactory
 	{
 		return array_replace_recursive([
 			'logger' => $this->getConfig('logger', []),
-			'http'   => $this->getConfig('http', []),
+			'http' => $this->getConfig('http', []),
 		], $config);
 	}
 
 	/**
 	 * 初始化
 	 *
-	 * @param T $driver
+	 * @param ProviderInterface $driver
 	 * @param array $options
-	 * @return T
+	 * @return ProviderInterface
 	 */
 	protected function initApplication($driver, array $options = [])
 	{

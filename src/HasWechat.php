@@ -46,17 +46,7 @@ trait HasWechat
 	 */
 	protected function makeWechat($config, array $options = [], string $providerName = null)
 	{
-		if (empty($config)) {
-			throw new PaymentNotConfigureException("payment config 'wechat.{$providerName}' not defined.");
-		}
 
-		$config = $this->initWechatConfig($config, $options);
-		$config = $this->initApplicationConfig($config, $options);
-
-		return $this->initApplication(
-			Pay::wechat($config),
-			$options
-		);
 	}
 
 
